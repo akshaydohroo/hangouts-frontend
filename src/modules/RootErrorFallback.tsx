@@ -11,6 +11,7 @@ export default function RootErrorFallback({
   error: ErrorDetails;
   resetErrorBoundary: () => void;
 }) {
+  console.log(error.message)
   if (!error || !error.message) {
     error = new ErrorDetails(
       "Unexpected Error",
@@ -18,7 +19,6 @@ export default function RootErrorFallback({
       500
     );
   }
-
   return (
     <Box sx={styles.wrapper}>
       <SvgIcon

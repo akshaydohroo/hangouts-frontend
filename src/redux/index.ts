@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import themeMode from "./themeMode";
 import snackbar from "./snackbar";
+import error from "./error";
 const store = configureStore({
   reducer: {
     themeMode,
     snackbar,
+    error
   },
 });
 

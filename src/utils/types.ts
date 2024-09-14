@@ -6,7 +6,9 @@ export class ErrorDetails extends Error {
     errorCode?: number,
     cause?: string
   ) {
-    super(message, { cause });
+    super();
+    this.message = message;
+    this.cause = cause;
     this.errorCode = errorCode;
     this.name = name;
   }

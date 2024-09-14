@@ -6,8 +6,12 @@ import { useNavigate } from "react-router";
 import { ReactComponent as LoginSvg } from "../assets/icons/login.svg";
 import GoogleLogin from "../components/common/GoogleLogin";
 import { User } from "../models/User";
+import useAppDispatch from "../hooks/useAppDispatch";
+import { setError } from "../redux/error";
+import { ErrorDetails } from "../utils/types";
 export default function Login() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [loginForm, setLoginForm] = React.useState<{
     userId: string;
     password: string;
@@ -32,8 +36,8 @@ export default function Login() {
               .then(() => {
                 navigate("/");
               })
-              .catch((err) => {
-                throw err;
+              .catch((err: Error) => {
+                dispatch(setError(new ErrorDetails(err.name, err.message)));
               });
           }}
         >

@@ -12,13 +12,17 @@ import { Outlet } from "react-router-dom";
 import RootSnackBar from "./components/common/RootSnackbar";
 import { googleOAuthClientId } from "./config";
 import useAppSelector from "./hooks/useAppSelector";
-
+import useAppDispatch from "./hooks/useAppDispatch";
+import { setSnackbar } from "./redux/snackbar";
 
 const queryClient = new QueryClient();
 
 function App() {
+  const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.themeMode.value);
-
+  const error = useAppSelector((state) => state.error.value);
+  error != null &&
+    dispatch(setSnackbar({ open: true, message: error.message,severity:"error"}));
   let theme = React.useMemo(
     () =>
       responsiveFontSizes(

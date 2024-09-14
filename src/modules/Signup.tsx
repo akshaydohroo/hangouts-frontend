@@ -6,8 +6,12 @@ import FileUpload from "../components/Signup/FileUpload";
 import GenderInput from "../components/Signup/GenderInput";
 import GoogleLogin from "../components/common/GoogleLogin";
 import { User, gender } from "../models/User";
+import { setError } from "../redux/error";
+import useAppDispatch from "../hooks/useAppDispatch";
+import { ErrorDetails } from "../utils/types";
 
 export default function Signup() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = React.useState<User>(
     new User({
@@ -43,8 +47,8 @@ export default function Signup() {
               .then((accessToken) => {
                 navigate("/");
               })
-              .catch((err) => {
-                throw err;
+              .catch((err: Error) => {
+                dispatch(setError(new ErrorDetails(err.name, err.message)));
               });
           }}
         >
