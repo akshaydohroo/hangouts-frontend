@@ -5,10 +5,14 @@ import { Navigate } from "react-router";
 import Loading from "../components/common/Loading";
 import Navbar from "../components/navbar/Navbar";
 import { getUserData } from "../functions/user";
-import { convertTime } from "../utils/functions";
+import { convertTime, extractErrorDetailFromErrorQuery } from "../utils/functions";
 import UserStories from "../components/dashboard/Story/UserStories";
+import useAppDispatch from "../hooks/useAppDispatch";
+import { setError } from "../redux/error";
+import { ErrorDetails } from "../utils/types";
 
 export default function Dashboard() {
+  const dispatch = useAppDispatch();
   const queryClient = useQueryClient();
   const userQuery = useQuery(["user", "data"], {
     queryFn: () => getUserData(),
@@ -21,6 +25,7 @@ export default function Dashboard() {
     return <Loading />;
   }
   if (userQuery.isError) {
+    dispatch(setError(extractErrorDetailFromErrorQuery(userQuery.error as any)))
     return <Navigate to="/login" />;
   }
   return (

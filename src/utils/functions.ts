@@ -1,5 +1,6 @@
 import crypto from "crypto-js";
 import { cryptoPasswordIV, cryptoPasswordKey } from "../config";
+import { ErrorDetails } from "./types";
 export function parseJWT<T>(token: string): T {
   const base64Url = token.split(".")[1];
   if (!base64Url) {
@@ -137,4 +138,19 @@ function pluralize(value: number, unit: string): string {
   } else {
     return `${value} ${unit}s`;
   }
+}
+export function extractErrorDetailFromErrorQuery(error: any) {
+  const errorName = error.name || "UnknownError";
+  const errorMessage = error.message || "Something went wrong";
+  const errorCode = error.status || 500; // Adjust this if your error structure differs
+  const errorCause = error.cause || undefined; // Adjust based on your actual error object
+
+  // Create an instance of ErrorDetails
+  const errorDetails = new ErrorDetails(
+    errorName,
+    errorMessage,
+    errorCode,
+    errorCause
+  );
+  return errorDetails;
 }

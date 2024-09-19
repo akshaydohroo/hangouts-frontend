@@ -129,6 +129,8 @@ const styles = {
     flexDirection: {
       xs: "column",
       md: "row",
+    },overflowY: {
+      md: "hidden", // Prevent overflow on larger screens
     },
   },
   formWrapper: {

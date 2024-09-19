@@ -1,5 +1,5 @@
 import { backend } from "../api";
-import { validateEmail } from "../utils/functions";
+import { encryptPassword, validateEmail } from "../utils/functions";
 export type gender = "Male" | "Female" | "Other" | "";
 export type UserAttributes = {
   name: string;
@@ -63,7 +63,7 @@ export class User {
     try {
       if (!userId) throw Error("Username or Email expected");
       if (!password) throw Error("Password Expected");
-      // password = encryptPassword(password);
+      password = encryptPassword(password);
       const res = await backend.post(
         "/auth/login",
         {

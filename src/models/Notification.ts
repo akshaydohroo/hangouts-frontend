@@ -10,14 +10,14 @@ type NotificationBackendAttributes = {
   createdAt?: string;
   updatedAt?: string;
 };
-export type NotificationBackendType = "like" | "comment" | "follow" | "message";
+export type NotificationBackendType = "like" | "comment" | "follow" | "message" | "notify";
 export type NotificationBackendSenderDataQuery = {
   count: number;
   totalPages: number;
   rows: NotificationBackendWithSender[];
 };
 export interface NotificationBackendWithSender extends NotificationBackend {
-  sender: Pick<UserAttributes, "name" | "picture" | "userName" | "id">;
+  sender: Pick<UserAttributes, "name" | "picture" | "userName" | "id" >;
 }
 export class NotificationBackend {
   public notificationId?: UUID;
