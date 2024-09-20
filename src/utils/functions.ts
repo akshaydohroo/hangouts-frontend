@@ -51,16 +51,6 @@ export function validateEmail(email: string): boolean {
   return emailRegex.test(email);
 }
 
-export function encryptPassword(password: string): string {
-  return crypto.AES.encrypt(
-    password,
-    crypto.enc.Base64.parse(cryptoPasswordKey),
-    {
-      iv: crypto.enc.Base64.parse(cryptoPasswordIV),
-    }
-  ).toString();
-}
-
 export function readFile(file: File): Promise<string> {
   return new Promise((res, rej) => {
     const fileReader = new FileReader();

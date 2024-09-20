@@ -20,7 +20,6 @@
     "@types/react-dom": "^18.2.4",
     "@types/react-window": "^1.8.5",
     "axios": "^1.4.0",
-    "crypto-js": "^4.1.1",
     "material": "^0.5.3",
     "material-ui-popup-state": "^5.0.9",
     "nuka-carousel": "^6.0.3",
