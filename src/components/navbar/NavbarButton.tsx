@@ -13,6 +13,7 @@ import { getUserNotifications } from "../../functions/notification";
 import { convertTime, pageControl } from "../../utils/functions";
 import NotificationOption from "./NotificationOption";
 import PaginationControl from "../common/PaginationControl";
+import useAppSelector from "../../hooks/useAppSelector";
 
 const iconTypeMap = {
   notifications: <NotificationsIcon />,
@@ -24,6 +25,7 @@ type NavbarButtonProps = {
 
 export default function NavbarButton({ type }: NavbarButtonProps) {
   const [page, setPage] = React.useState<number>(1);
+  const isAuthenticated  = useAppSelector((state) => state.authenticated.value);
   const useNavbarButtonQuery = useQuery({
     queryKey: [
       `${type}`,
@@ -40,6 +42,7 @@ export default function NavbarButton({ type }: NavbarButtonProps) {
     },
     staleTime: convertTime(1, "min", "ms"),
     keepPreviousData: true,
+    enabled: isAuthenticated, // Run the query only when the user is authenticated
   });
   if (useNavbarButtonQuery.isError) {
     console.error(useNavbarButtonQuery.error);

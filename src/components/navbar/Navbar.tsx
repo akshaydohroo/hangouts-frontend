@@ -1,35 +1,61 @@
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import HomeIcon from "@mui/icons-material/Home";
-import { AppBar, IconButton, Stack, Toolbar, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { getUserData } from "../../functions/user";
+import {
+  AppBar,
+  Avatar,
+  IconButton,
+  Stack,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import useAppDispatch from "../../hooks/useAppDispatch";
 import useAppSelector from "../../hooks/useAppSelector";
 import { UserAttributes } from "../../models/User";
 import { toggleThemeMode } from "../../redux/themeMode";
-import { convertTime } from "../../utils/functions";
 import NavbarButton from "./NavbarButton";
 import UserButton from "./UserButton";
 import UserSearch from "./UserSearch";
-export default function Navbar() {
+import { setError } from "../../redux/error";
+import { ErrorDetails } from "../../utils/types";
+import React, { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserData } from "../../functions/user";
+import {
+  convertTime,
+  extractErrorDetailFromErrorQuery,
+} from "../../utils/functions";
+import {
+  removeAuthenticated,
+  setAuthenticated,
+} from "../../redux/authenticated";
+import { setSnackbar } from "../../redux/snackbar";
+export default function Navbar({}) {
   const mode = useAppSelector((state) => state.themeMode.value);
   const dispatch = useAppDispatch();
+  const userQuery = useQuery(["user", "data"], {
+    queryFn: () => getUserData(),
+    staleTime: convertTime(5, "min", "ms"),
+  });
 
-  const userQuery = useQuery<Omit<UserAttributes, "password">, Error>(
-    ["user", "data"],
-    {
-      queryFn: () => getUserData(),
-      staleTime: convertTime(5, "min", "ms"),
+    if (userQuery.isError) {
+      dispatch(
+        setError(extractErrorDetailFromErrorQuery(userQuery.error as any))
+      );
     }
-  );
-  if (userQuery.isError) {
-    throw userQuery.error;
-  }
-  if (!userQuery.data) {
-    throw Error("NO data");
-  }
+    if (!userQuery.isLoading ) {
+      if(userQuery.data == null){
+        dispatch(
+          setError(new ErrorDetails("User data not found", "User data not found"))
+        );
+        dispatch(removeAuthenticated());
+      }else{
+        console.log(userQuery.data);
+        dispatch(setAuthenticated());
+      }
+    } else {
+      dispatch(setSnackbar({autoHideDuration:1000 ,message: "Loading user data", severity: "info" }));
+    }
 
-  const user = userQuery.data;
   return (
     <AppBar sx={styles.appBar(mode)} enableColorOnDark position="static">
       <Toolbar>
@@ -50,7 +76,7 @@ export default function Navbar() {
           >
             <Brightness4Icon sx={styles.homeButton} />
           </IconButton>
-          <UserButton picture={user.picture as string} />
+          <UserButton picture={userQuery.data?.picture as string | undefined} />
         </Stack>
       </Toolbar>
     </AppBar>

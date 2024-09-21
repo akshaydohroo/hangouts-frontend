@@ -1,12 +1,19 @@
 import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { User } from "../../models/User";
-import useAppDispatch from "../../hooks/useAppDispatch";
-import { setSnackbar } from "../../redux/snackbar";
+import LoginMenuItem from "../profileMenuItems/LoginMenuItem";
+import LogoutMenuItem from "../profileMenuItems/LogoutMenuItem";
+import AccountMenuItem from "../profileMenuItems/AccountMenuItem";
+import useAppSelector from "../../hooks/useAppSelector";
+import { Sign } from "crypto";
+import SignupMenuItem from "../profileMenuItems/SignupMenuItem";
 
-export default function UserButton({ picture }: { picture: string }) {
-  const navigate = useNavigate();
+export default function UserButton({
+  picture,
+}: {
+  picture: string | undefined;
+}) {
+  console.log(picture === undefined);
+  const isAuthenticated = useAppSelector((state) => state.authenticated.value);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -15,31 +22,6 @@ export default function UserButton({ picture }: { picture: string }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const dispatch = useAppDispatch();
-  async function onClickLogout() {
-    try {
-      await User.logout();
-      dispatch(
-        setSnackbar({
-          message: "You have logged out successfully",
-          severity: "info",
-          alertVarient: "standard",
-        })
-      );
-    } catch (error) {
-      console.error(error);
-      dispatch(
-        setSnackbar({
-          message:
-            "There was error during logout, You are redirected to login page",
-          severity: "warning",
-          alertVarient: "standard",
-        })
-      );
-    } finally {
-      navigate("/login");
-    }
-  }
   return (
     <>
       <IconButton
@@ -50,7 +32,11 @@ export default function UserButton({ picture }: { picture: string }) {
         onClick={handleClick}
         sx={styles.userButton}
       >
-        <Avatar sx={{ width: 28, height: 28 }} src={picture} />
+        {picture === undefined ? (
+          <Avatar sx={{ width: 28, height: 28 }} />
+        ) : (
+          <Avatar sx={{ width: 28, height: 28 }} src={picture} />
+        )}
       </IconButton>
       <Menu
         id={`user-menu`}
@@ -61,9 +47,17 @@ export default function UserButton({ picture }: { picture: string }) {
           "aria-labelledby": `user-button`,
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={onClickLogout}>Logout</MenuItem>
+        {isAuthenticated ? (
+          <>
+            <AccountMenuItem />
+            <LogoutMenuItem />
+          </>
+        ) : (
+          <>
+            <LoginMenuItem />
+            <SignupMenuItem />
+          </>
+        )}
       </Menu>
     </>
   );

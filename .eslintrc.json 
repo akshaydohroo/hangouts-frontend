@@ -1,0 +1,9 @@
+{
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "plugins": ["import"],
+  "rules": {
+    "prettier/prettier": ["error"],
+    "import/no-unused-modules": ["error", { "unusedExports": true }],
+    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": false }]
+  }
+}
