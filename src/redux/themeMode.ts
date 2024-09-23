@@ -1,27 +1,27 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface themeMode {
-  value: boolean;
+  value: boolean
 }
-const matchDarkMedia = window.matchMedia("(prefers-color-scheme: dark)");
+const matchDarkMedia = window.matchMedia('(prefers-color-scheme: dark)')
 
 const initialState: themeMode = {
   value: matchDarkMedia.matches,
-};
+}
 
 export const counterSlice = createSlice({
-  name: "counter",
+  name: 'counter',
   initialState,
   reducers: {
-    toggleThemeMode: (state) => {
-      state.value = !state.value;
+    toggleThemeMode: state => {
+      state.value = !state.value
     },
     setThemeMode: (state, action: PayloadAction<boolean>) => {
-      state.value = action.payload;
+      state.value = action.payload
     },
   },
-});
+})
 
-export const { toggleThemeMode, setThemeMode } = counterSlice.actions;
+export const { toggleThemeMode, setThemeMode } = counterSlice.actions
 
-export default counterSlice.reducer;
+export default counterSlice.reducer

@@ -1,15 +1,15 @@
 import { Button, Stack, SvgIcon, TextField } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useNavigate } from 'react-router'
 import { ReactComponent as SignupSvg } from '../assets/icons/signup.svg'
 import FileUpload from '../components/Signup/FileUpload'
 import GenderInput from '../components/Signup/GenderInput'
 import GoogleLogin from '../components/common/GoogleLogin'
+import useAppDispatch from '../hooks/useAppDispatch'
 import { User, gender } from '../models/User'
 import { setError } from '../redux/error'
-import useAppDispatch from '../hooks/useAppDispatch'
 import { ErrorDetails } from '../utils/types'
-import { useQueryClient } from '@tanstack/react-query'
 
 export default function Signup() {
   const dispatch = useAppDispatch()

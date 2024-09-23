@@ -1,12 +1,13 @@
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useState } from 'react'
 import { followUser } from '../../functions/userFollower'
+import useAppDispatch from '../../hooks/useAppDispatch'
+import useAppSelector from '../../hooks/useAppSelector'
 import { invalidateUserFollowOptions } from '../../invalidateQueries'
 import { UserWithFollower } from '../../models/UserFollower'
-import useAppDispatch from '../../hooks/useAppDispatch'
 import { setSnackbar } from '../../redux/snackbar'
-import useAppSelector from '../../hooks/useAppSelector'
 
 export default function UserSearchOption({
   option,
@@ -20,10 +21,15 @@ export default function UserSearchOption({
   const dispatch = useAppDispatch()
   const queryClient = useQueryClient()
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
-  const preRequestIfAnyStatus =
-    option.followers &&
-    option.followers.length > 0 &&
-    option.followers[0]?.connection.status
+  const [preRequestIfAnyStatus, setPreRequestIfAnyStatus] = useState<
+    'accepted' | 'pending' | null
+  >(null)
+
+  useEffect(() => {
+    if (option.followers && option.followers.length > 0) {
+      setPreRequestIfAnyStatus(option.followers[0]?.connection.status)
+    }
+  }, [option.followers])
   async function onFollowClickHandler() {
     try {
       const connectionId = await followUser(option.id as string)

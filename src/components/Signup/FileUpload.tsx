@@ -1,13 +1,13 @@
-import { AccountCircle } from "@mui/icons-material";
-import { Box, InputAdornment, TextField } from "@mui/material";
-import React from "react";
+import { AccountCircle } from '@mui/icons-material'
+import { Box, InputAdornment, TextField } from '@mui/material'
+import React from 'react'
 
 export default function FileUpload({
   value,
   onChangeHandler,
 }: {
-  value: File | "";
-  onChangeHandler: React.ChangeEventHandler<HTMLInputElement>;
+  value: File | ''
+  onChangeHandler: React.ChangeEventHandler<HTMLInputElement>
 }) {
   return (
     <Box sx={styles.wrapper}>
@@ -17,16 +17,15 @@ export default function FileUpload({
         InputLabelProps={{ shrink: true }}
         sx={styles.fileInput}
         onChange={onChangeHandler}
-        inputProps={{ accept: ".jpg,.jpeg,.png", }}
+        inputProps={{ accept: '.jpg,.jpeg,.png' }}
         name="picture"
-
       />
       <TextField
         type="text"
         label="Upload Avatar"
         InputLabelProps={{ shrink: true }}
         sx={styles.styledInput}
-        value={!value ? "" : value.name}
+        value={!value ? '' : value.name}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -36,20 +35,20 @@ export default function FileUpload({
         }}
       />
     </Box>
-  );
+  )
 }
 const styles = {
   wrapper: {
-    position: "relative",
-    width: "100%",
+    position: 'relative',
+    width: '100%',
   },
   fileInput: {
-    position: "absolute",
+    position: 'absolute',
     zIndex: 2,
     opacity: 0,
-    width: "100%",
+    width: '100%',
   },
   styledInput: {
-    width: "100%",
+    width: '100%',
   },
-};
+}

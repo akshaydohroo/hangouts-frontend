@@ -1,23 +1,22 @@
-import { Box, Button, SvgIcon, Typography } from "@mui/material";
-import { FallbackProps } from "react-error-boundary";
-import { ReactComponent as ErrorSvg } from "../assets/icons/error.svg";
-import { ReactComponent as ServerErrorSvg } from "../assets/icons/server_error.svg";
+import { Box, Button, SvgIcon, Typography } from '@mui/material'
+import { ReactComponent as ErrorSvg } from '../assets/icons/error.svg'
+import { ReactComponent as ServerErrorSvg } from '../assets/icons/server_error.svg'
 
-import { ErrorDetails } from "../utils/types";
+import { ErrorDetails } from '../utils/types'
 export default function RootErrorFallback({
   error,
   resetErrorBoundary,
 }: {
-  error: ErrorDetails;
-  resetErrorBoundary: () => void;
+  error: ErrorDetails
+  resetErrorBoundary: () => void
 }) {
   console.log(error.message)
   if (!error || !error.message) {
     error = new ErrorDetails(
-      "Unexpected Error",
-      "An unexpected error has occured",
+      'Unexpected Error',
+      'An unexpected error has occured',
       500
-    );
+    )
   }
   return (
     <Box sx={styles.wrapper}>
@@ -32,27 +31,27 @@ export default function RootErrorFallback({
       <Typography>
         {error.errorCode &&
           error.errorCode === 500 &&
-          "We are working tirelessly towards resolving this issue"}
+          'We are working tirelessly towards resolving this issue'}
       </Typography>
       <Button onClick={() => resetErrorBoundary()}>click to retry</Button>
     </Box>
-  );
+  )
 }
 
 const styles = {
   wrapper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    minWidth: "100vw",
-    minHeight: "100vh",
-    maxWidth: "100vw",
-    overflowX: "hidden",
-    height: "100vh",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: '100vw',
+    minHeight: '100vh',
+    maxWidth: '100vw',
+    overflowX: 'hidden',
+    height: '100vh',
   },
   svg: {
-    height: "50vh",
-    width: "50vw",
+    height: '50vh',
+    width: '50vw',
   },
-};
+}

@@ -1,5 +1,5 @@
-import CancelIcon from "@mui/icons-material/Cancel";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from '@mui/icons-material/Cancel'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import {
   Avatar,
   Box,
@@ -7,55 +7,55 @@ import {
   Stack,
   Tooltip,
   Typography,
-} from "@mui/material";
-import { NotificationBackendWithSender } from "../../models/Notification";
-import { timeSince } from "../../utils/functions";
-import { deleteNotification } from "../../functions/notification";
-import { UUID } from "crypto";
-import useAppDispatch from "../../hooks/useAppDispatch";
-import { setSnackbar } from "../../redux/snackbar";
-import { useQueryClient } from "@tanstack/react-query";
-import { acceptUserFollowRequest } from "../../functions/userFollower";
-import { invalidateNotificationsUserQuery } from "../../invalidateQueries";
+} from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
+import { UUID } from 'crypto'
+import { deleteNotification } from '../../functions/notification'
+import { acceptUserFollowRequest } from '../../functions/userFollower'
+import useAppDispatch from '../../hooks/useAppDispatch'
+import { invalidateNotificationsUserQuery } from '../../invalidateQueries'
+import { NotificationBackendWithSender } from '../../models/Notification'
+import { setSnackbar } from '../../redux/snackbar'
+import { timeSince } from '../../utils/functions'
 export default function NotificationOption({
   page,
   notificationWithSender,
 }: {
-  page: number;
-  notificationWithSender: NotificationBackendWithSender;
+  page: number
+  notificationWithSender: NotificationBackendWithSender
 }) {
-  const dispatch = useAppDispatch();
-  const queryClient = useQueryClient();
-  async function onClickNotificationHandler(type: "accept" | "clear") {
+  const dispatch = useAppDispatch()
+  const queryClient = useQueryClient()
+  async function onClickNotificationHandler(type: 'accept' | 'clear') {
     try {
-      let notificationStatus: string;
-      if (type === "accept") {
-        await acceptUserFollowRequest(notificationWithSender.senderId);
-        notificationStatus = `Follow request from ${notificationWithSender.sender.name} accepted`;
+      let notificationStatus: string
+      if (type === 'accept') {
+        await acceptUserFollowRequest(notificationWithSender.senderId)
+        notificationStatus = `Follow request from ${notificationWithSender.sender.name} accepted`
       } else {
-        notificationStatus = "Notification cleared";
+        notificationStatus = 'Notification cleared'
       }
-      await deleteNotification(notificationWithSender.notificationId as UUID);
+      await deleteNotification(notificationWithSender.notificationId as UUID)
       queryClient.invalidateQueries({
         predicate: ({ queryKey }) =>
           invalidateNotificationsUserQuery(queryKey, page),
-      });
+      })
       dispatch(
         setSnackbar({
           message: `${notificationStatus}`,
-          severity: type === "accept" ? "success" : "info",
-          alertVarient: type === "accept" ? "filled" : "standard",
+          severity: type === 'accept' ? 'success' : 'info',
+          alertVarient: type === 'accept' ? 'filled' : 'standard',
         })
-      );
+      )
     } catch (err) {
-      console.error(err);
+      console.error(err)
       dispatch(
         setSnackbar({
-          message: "Notification error, user action couldnt be performed",
-          severity: "error",
-          alertVarient: "filled",
+          message: 'Notification error, user action couldnt be performed',
+          severity: 'error',
+          alertVarient: 'filled',
         })
-      );
+      )
     }
   }
 
@@ -71,7 +71,7 @@ export default function NotificationOption({
             @{notificationWithSender.sender.userName}
           </Typography>
           <Typography component="div" variant="caption">
-            {timeSince(new Date(notificationWithSender.createdAt as string))}{" "}
+            {timeSince(new Date(notificationWithSender.createdAt as string))}{' '}
             ago
           </Typography>
         </Stack>
@@ -84,7 +84,7 @@ export default function NotificationOption({
           <Tooltip title="Clear Notification" arrow placement="right">
             <IconButton
               sx={styles.rejectButton}
-              onClick={() => onClickNotificationHandler("clear")}
+              onClick={() => onClickNotificationHandler('clear')}
             >
               <CancelIcon />
             </IconButton>
@@ -94,7 +94,7 @@ export default function NotificationOption({
           <Tooltip title="Accept Request" arrow placement="right">
             <IconButton
               sx={styles.acceptButton}
-              onClick={() => onClickNotificationHandler("accept")}
+              onClick={() => onClickNotificationHandler('accept')}
             >
               <CheckCircleIcon />
             </IconButton>
@@ -102,33 +102,33 @@ export default function NotificationOption({
         </Box>
       </Stack>
     </Stack>
-  );
+  )
 }
 
 const styles = {
   wrapper: {
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   notificationWrapper: {
     flex: 1,
   },
   senderPictureAndUsernameWrapper: {
-    alignItems: "center",
+    alignItems: 'center',
     mb: 0.5,
-    "& > div": {
+    '& > div': {
       mr: 2,
     },
   },
   notificationControl: {
     width: 44,
-    "& > *:first-of-type": {
-      position: "absolute",
+    '& > *:first-of-type': {
+      position: 'absolute',
       top: 0,
     },
-    "& > *:last-of-type": {
-      position: "absolute",
+    '& > *:last-of-type': {
+      position: 'absolute',
       bottom: 0,
     },
   },
@@ -137,20 +137,20 @@ const styles = {
     width: 36,
   },
   acceptButton: {
-    "&:hover, &:focus": {
-      color: "success.main",
+    '&:hover, &:focus': {
+      color: 'success.main',
     },
   },
   rejectButton: {
-    "&:hover, &:focus": {
-      color: "error.main",
+    '&:hover, &:focus': {
+      color: 'error.main',
     },
   },
   timeSince: {
     fontSize: 14,
-    color: "text.secondary",
+    color: 'text.secondary',
   },
   notificationMessage: {
     fontSize: 15,
   },
-};
+}

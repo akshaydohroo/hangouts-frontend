@@ -1,26 +1,26 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ErrorDetails } from "../utils/types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { ErrorDetails } from '../utils/types'
 
 const initialState: {
-  value: ErrorDetails | null;
+  value: ErrorDetails | null
 } = {
   value: null,
-};
+}
 
 export const errorSlice = createSlice({
-  name: "error",
+  name: 'error',
   initialState,
   reducers: {
     setError: (state, action: PayloadAction<ErrorDetails>) => {
-      state.value = { ...action.payload };
+      state.value = { ...action.payload }
       console.log(state.value)
     },
-    resetError : (state, action:PayloadAction<void>) => {
+    resetError: (state, action: PayloadAction<void>) => {
       state.value = null
-    }
+    },
   },
-});
+})
 
-export const {setError, resetError} = errorSlice.actions;
+export const { setError, resetError } = errorSlice.actions
 
-export default errorSlice.reducer;
+export default errorSlice.reducer

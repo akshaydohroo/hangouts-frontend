@@ -1,11 +1,15 @@
-import { ListItemIcon, MenuItem, Typography } from '@mui/material'
+import { MenuItem, Typography } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import useAppDispatch from '../../hooks/useAppDispatch'
 import { User } from '../../models/User'
 import { setSnackbar } from '../../redux/snackbar'
-import { useQueryClient } from '@tanstack/react-query'
 
-export default function LogoutMenuItem() {
+export default function LogoutMenuItem({
+  handleClose,
+}: {
+  handleClose: () => void
+}) {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const queryClient = useQueryClient()
@@ -35,7 +39,12 @@ export default function LogoutMenuItem() {
     }
   }
   return (
-    <MenuItem onClick={() => onClickLogout()}>
+    <MenuItem
+      onClick={() => {
+        handleClose()
+        onClickLogout()
+      }}
+    >
       <Typography>Logout</Typography>
     </MenuItem>
   )

@@ -1,19 +1,19 @@
 import { Box, Stack } from '@mui/material'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import React, { useEffect } from 'react'
-import { Navigate } from 'react-router'
-import Loading from '../components/common/Loading'
+import { useQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import UserStories from '../components/dashboard/Story/UserStories'
 import Navbar from '../components/navbar/Navbar'
 import { getUserData } from '../functions/user'
+import useAppDispatch from '../hooks/useAppDispatch'
+import Account from '../modules/Account' // Import the Account component
+import { removeAuthenticated, setAuthenticated } from '../redux/authenticated'
+import { setError } from '../redux/error'
 import {
   convertTime,
   extractErrorDetailFromErrorQuery,
 } from '../utils/functions'
-import UserStories from '../components/dashboard/Story/UserStories'
-import useAppDispatch from '../hooks/useAppDispatch'
-import { setError } from '../redux/error'
 import { ErrorDetails } from '../utils/types'
-import { removeAuthenticated, setAuthenticated } from '../redux/authenticated'
 
 export default function Dashboard() {
   const dispatch = useAppDispatch()
@@ -38,18 +38,32 @@ export default function Dashboard() {
     if (!userData?.userName && !userData?.email) {
       dispatch(removeAuthenticated())
     }
-  }, [userData])
+  }, [userData, dispatch])
 
   return (
-    <Box>
+    <Box sx={styles.dashboard}>
       <Navbar />
-      <Stack direction="row">
-        <Stack width="70%">
-          <UserStories />
-          <Stack>Posts</Stack>
-        </Stack>
-        <Box width="30%">Chats</Box>
-      </Stack>
+      <Routes>
+        <Route path="/account" element={<Account />} />
+        <Route
+          path="*"
+          element={
+            <Stack direction="row">
+              <Stack width="70%">
+                <UserStories />
+                <Stack>Posts</Stack>
+              </Stack>
+              <Box width="30%">Chats</Box>
+            </Stack>
+          }
+        />
+      </Routes>
     </Box>
   )
+}
+const styles = {
+  dashboard: {
+    maxHeight: 'wrap-content',
+    width: '100vw',
+  },
 }

@@ -1,25 +1,25 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
 interface authenticated {
-  value: boolean;
+  value: boolean
 }
 const initialState: authenticated = {
   value: false,
-};
+}
 
 export const counterSlice = createSlice({
-  name: "authenticated",
+  name: 'authenticated',
   initialState,
   reducers: {
-    setAuthenticated: (state) => {
-      state.value = true;
+    setAuthenticated: state => {
+      state.value = true
     },
-    removeAuthenticated: (state) => {
-      state.value = false;
+    removeAuthenticated: state => {
+      state.value = false
     },
   },
-});
+})
 
-export const { setAuthenticated, removeAuthenticated } = counterSlice.actions;
+export const { setAuthenticated, removeAuthenticated } = counterSlice.actions
 
-export default counterSlice.reducer;
+export default counterSlice.reducer

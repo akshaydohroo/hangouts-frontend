@@ -1,5 +1,3 @@
-import crypto from "crypto-js";
-import { cryptoPasswordIV, cryptoPasswordKey } from "../config";
 import { ErrorDetails } from "./types";
 export function parseJWT<T>(token: string): T {
   const base64Url = token.split(".")[1];

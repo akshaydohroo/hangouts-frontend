@@ -8,14 +8,14 @@ import {
 } from 'material-ui-popup-state/hooks'
 import React from 'react'
 import { followUsersOptions } from '../../functions/userFollower'
+import useAppSelector from '../../hooks/useAppSelector'
 import {
   UserFollowOptionsQuery,
   UsersOptionQuery,
 } from '../../models/UserFollower'
 import { convertTime, pageControl } from '../../utils/functions'
-import UserSearchOption from './UserSearchOption'
 import PaginationControl from '../common/PaginationControl'
-import useAppSelector from '../../hooks/useAppSelector'
+import UserSearchOption from './UserSearchOption'
 
 export default function UserSearch() {
   const [inputValue, setInputValue] = React.useState<string>('')
@@ -39,7 +39,7 @@ export default function UserSearch() {
           searchString: string
           page: number
         }
-        return followUsersOptions(page, searchString, isAuthenticated)
+        return followUsersOptions(page, 5, searchString, isAuthenticated)
       },
       keepPreviousData: true,
       enabled: inputValue.trim().length > 2,
@@ -113,5 +113,28 @@ const styles = {
   searchTextField: {
     backgroundColor: 'background.default',
     width: 300,
+    borderRadius: '8px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    '& .MuiInputBase-root': {
+      padding: '8px 12px',
+    },
+    '& .MuiInputBase-input': {
+      fontSize: '16px',
+      padding: '12px',
+      color: 'text.primary',
+      fontWeight: 'bold',
+      letterSpacing: '0.5px',
+      lineHeight: '1.5',
+    },
+    '& .MuiSvgIcon-root': {
+      color: 'text.secondary',
+    },
+    '&:hover': {
+      backgroundColor: 'background.paper',
+    },
+    '& .Mui-focused': {
+      backgroundColor: 'background.paper',
+      boxShadow: '0 0 0 2px rgba(0, 123, 255, 0.25)',
+    },
   },
 }

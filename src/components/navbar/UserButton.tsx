@@ -1,10 +1,9 @@
-import { Avatar, IconButton, Menu, MenuItem } from '@mui/material'
+import { Avatar, Box, IconButton, Menu } from '@mui/material'
 import React from 'react'
+import useAppSelector from '../../hooks/useAppSelector'
+import AccountMenuItem from '../profileMenuItems/AccountMenuItem'
 import LoginMenuItem from '../profileMenuItems/LoginMenuItem'
 import LogoutMenuItem from '../profileMenuItems/LogoutMenuItem'
-import AccountMenuItem from '../profileMenuItems/AccountMenuItem'
-import useAppSelector from '../../hooks/useAppSelector'
-import { Sign } from 'crypto'
 import SignupMenuItem from '../profileMenuItems/SignupMenuItem'
 
 export default function UserButton({
@@ -12,7 +11,6 @@ export default function UserButton({
 }: {
   picture: string | undefined
 }) {
-  console.log(picture === undefined)
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -48,15 +46,15 @@ export default function UserButton({
         }}
       >
         {isAuthenticated ? (
-          <>
-            <AccountMenuItem />
-            <LogoutMenuItem />
-          </>
+          <Box>
+            <AccountMenuItem handleClose={handleClose} />
+            <LogoutMenuItem handleClose={handleClose} />
+          </Box>
         ) : (
-          <>
-            <LoginMenuItem />
-            <SignupMenuItem />
-          </>
+          <Box>
+            <LoginMenuItem handleClose={handleClose} />
+            <SignupMenuItem handleClose={handleClose} />
+          </Box>
         )}
       </Menu>
     </>

@@ -1,6 +1,5 @@
 import { backend } from '../api'
 import { validateEmail } from '../utils/functions'
-import { useQueryClient } from '@tanstack/react-query'
 
 export type gender = 'Male' | 'Female' | 'Other' | ''
 

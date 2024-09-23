@@ -7,6 +7,7 @@ import {
 
 export async function followUsersOptions(
   page: number,
+  limit: number,
   searchString: string,
   isAuthenticated: boolean
 ): Promise<UserFollowOptionsQuery | UsersOptionQuery> {
@@ -17,7 +18,7 @@ export async function followUsersOptions(
         params: {
           searchString,
           page,
-          limit: 5,
+          limit: limit,
         },
         withCredentials: true,
       })

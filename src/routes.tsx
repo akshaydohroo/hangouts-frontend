@@ -1,11 +1,12 @@
 import { ErrorBoundary } from 'react-error-boundary'
 import { createBrowserRouter, RouteObject } from 'react-router-dom'
 import App from './App'
+import Account from './modules/Account'
 import Dashboard from './modules/Dashboard'
-import RootErrorFallback from './modules/RootErrorFallback'
 import Login from './modules/Login'
-import Signup from './modules/Signup'
+import RootErrorFallback from './modules/RootErrorFallback'
 import RouteError from './modules/RouteError'
+import Signup from './modules/Signup'
 
 export const routes: RouteObject[] = [
   {
@@ -15,6 +16,16 @@ export const routes: RouteObject[] = [
   {
     path: '/signup',
     element: <Signup />,
+  },
+  {
+    path: '/',
+    element: <Dashboard />,
+    children: [
+      {
+        path: 'account',
+        element: <Account />,
+      },
+    ],
   },
   {
     index: true,

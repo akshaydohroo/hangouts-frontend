@@ -1,110 +1,110 @@
-import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { IconButton, debounce } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import React from "react";
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import { IconButton, debounce } from '@mui/material'
+import { grey } from '@mui/material/colors'
+import React from 'react'
 
-type direction = "left" | "right";
+type direction = 'left' | 'right'
 function disableButtons(
   scrollLeft: number,
   offsetWidth: number,
   scrollWidth: number,
   setDisabledButton: React.Dispatch<
-    React.SetStateAction<direction | "both" | null>
+    React.SetStateAction<direction | 'both' | null>
   >
 ) {
-  const leftDisabled = Math.floor(scrollLeft) === 0;
-  const rightDisabled = Math.ceil(scrollLeft + offsetWidth) >= scrollWidth;
-  console.log([scrollLeft + offsetWidth, scrollWidth]);
+  const leftDisabled = Math.floor(scrollLeft) === 0
+  const rightDisabled = Math.ceil(scrollLeft + offsetWidth) >= scrollWidth
+  console.log([scrollLeft + offsetWidth, scrollWidth])
   if (leftDisabled && rightDisabled) {
-    setDisabledButton("both");
+    setDisabledButton('both')
   } else if (leftDisabled) {
-    setDisabledButton("left");
+    setDisabledButton('left')
   } else if (rightDisabled) {
-    setDisabledButton("right");
-  } else setDisabledButton(null);
+    setDisabledButton('right')
+  } else setDisabledButton(null)
 }
 const disableButtonsEvent = debounce(
   (
     carousel: HTMLDivElement,
     setDisabledButton: React.Dispatch<
-      React.SetStateAction<direction | "both" | null>
+      React.SetStateAction<direction | 'both' | null>
     >
   ) => {
-    const { scrollLeft, offsetWidth, scrollWidth } = carousel as HTMLDivElement;
-    disableButtons(scrollLeft, offsetWidth, scrollWidth, setDisabledButton);
+    const { scrollLeft, offsetWidth, scrollWidth } = carousel as HTMLDivElement
+    disableButtons(scrollLeft, offsetWidth, scrollWidth, setDisabledButton)
   },
   300
-);
+)
 export default function CarouselControl({
   carouselRef,
 }: {
-  carouselRef: React.RefObject<HTMLDivElement>;
+  carouselRef: React.RefObject<HTMLDivElement>
 }) {
   function onClickCarouselControl(
     e: React.MouseEvent<HTMLButtonElement>,
     direction: direction
   ) {
-    if (!carouselRef.current) return;
-    if (direction === "left") {
-      carouselRef.current.scrollLeft -= carouselRef.current.offsetWidth;
+    if (!carouselRef.current) return
+    if (direction === 'left') {
+      carouselRef.current.scrollLeft -= carouselRef.current.offsetWidth
     } else {
-      carouselRef.current.scrollLeft += carouselRef.current.offsetWidth;
+      carouselRef.current.scrollLeft += carouselRef.current.offsetWidth
     }
   }
   const [disabled, setDisabledButton] = React.useState<
-    direction | null | "both"
-  >(null);
+    direction | null | 'both'
+  >(null)
   React.useEffect(() => {
-    if (!carouselRef.current) return;
-    const carousel = carouselRef.current;
-    carousel.addEventListener("scroll", (ev) =>
+    if (!carouselRef.current) return
+    const carousel = carouselRef.current
+    carousel.addEventListener('scroll', ev =>
       disableButtonsEvent(carousel, setDisabledButton)
-    );
-    window.addEventListener("resize", (ev) =>
+    )
+    window.addEventListener('resize', ev =>
       disableButtonsEvent(carousel, setDisabledButton)
-    );
-    const { scrollLeft, offsetWidth, scrollWidth } = carousel;
-    disableButtons(scrollLeft, offsetWidth, scrollWidth, setDisabledButton);
+    )
+    const { scrollLeft, offsetWidth, scrollWidth } = carousel
+    disableButtons(scrollLeft, offsetWidth, scrollWidth, setDisabledButton)
     return () => {
-      carousel.removeEventListener("scroll", () =>
+      carousel.removeEventListener('scroll', () =>
         disableButtonsEvent(carousel, setDisabledButton)
-      );
-      window.removeEventListener("resize", () =>
+      )
+      window.removeEventListener('resize', () =>
         disableButtonsEvent(carousel, setDisabledButton)
-      );
-    };
-  }, [carouselRef]);
+      )
+    }
+  }, [carouselRef])
   return (
     <>
       <IconButton
         sx={{ ...styles.buttonLeft, ...styles.button }}
-        onClick={(e) => onClickCarouselControl(e, "left")}
-        disabled={disabled === "left" || disabled === "both"}
+        onClick={e => onClickCarouselControl(e, 'left')}
+        disabled={disabled === 'left' || disabled === 'both'}
       >
         <KeyboardArrowLeftIcon
           sx={{
             ...styles.icon,
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light" ? grey[900] : grey[200],
+            backgroundColor: theme =>
+              theme.palette.mode === 'light' ? grey[900] : grey[200],
           }}
         />
       </IconButton>
       <IconButton
         sx={{ ...styles.buttonRight, ...styles.button }}
-        onClick={(e) => onClickCarouselControl(e, "right")}
-        disabled={disabled === "right" || disabled === "both"}
+        onClick={e => onClickCarouselControl(e, 'right')}
+        disabled={disabled === 'right' || disabled === 'both'}
       >
         <KeyboardArrowRightIcon
           sx={{
             ...styles.icon,
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light" ? grey[800] : grey[300],
+            backgroundColor: theme =>
+              theme.palette.mode === 'light' ? grey[800] : grey[300],
           }}
         />
       </IconButton>
     </>
-  );
+  )
 }
 const styles = {
   buttonLeft: {
@@ -114,14 +114,14 @@ const styles = {
     right: -7.5,
   },
   button: {
-    position: "absolute",
-    "&:hover": {
-      backgroundColor: "transparent",
+    position: 'absolute',
+    '&:hover': {
+      backgroundColor: 'transparent',
     },
-    "&:disabled": {
-      "& > *": {
-        backgroundColor: "action.disabled",
-        color: "text.disabled",
+    '&:disabled': {
+      '& > *': {
+        backgroundColor: 'action.disabled',
+        color: 'text.disabled',
       },
     },
   },
@@ -129,6 +129,6 @@ const styles = {
     borderRadius: 50,
     p: 0.02,
     fontSize: 24,
-    color: "background.default",
+    color: 'background.default',
   },
-};
+}

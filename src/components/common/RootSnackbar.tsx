@@ -1,15 +1,14 @@
-import { Alert, Box, Snackbar } from "@mui/material";
-import React from "react";
-import useAppSelector from "../../hooks/useAppSelector";
-import useAppDispatch from "../../hooks/useAppDispatch";
-import { resetSnackbar } from "../../redux/snackbar";
+import { Alert, Box, Snackbar } from '@mui/material'
+import useAppDispatch from '../../hooks/useAppDispatch'
+import useAppSelector from '../../hooks/useAppSelector'
+import { resetSnackbar } from '../../redux/snackbar'
 
 export default function RootSnackBar() {
   const { open, autoHideDuration, message, severity, isAlert, alertVarient } =
-    useAppSelector((state) => state.snackbar.value);
-  const dispatch = useAppDispatch();
+    useAppSelector(state => state.snackbar.value)
+  const dispatch = useAppDispatch()
   function handleClose() {
-    dispatch(resetSnackbar());
+    dispatch(resetSnackbar())
   }
   return (
     <Snackbar
@@ -25,5 +24,5 @@ export default function RootSnackBar() {
         <Box>{message}</Box>
       )}
     </Snackbar>
-  );
+  )
 }
