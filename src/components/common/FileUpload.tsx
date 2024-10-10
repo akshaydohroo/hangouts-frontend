@@ -3,22 +3,27 @@ import { Box, InputAdornment, TextField } from '@mui/material'
 import React from 'react'
 
 export default function FileUpload({
+  enabled,
+  name,
   value,
   onChangeHandler,
 }: {
+  enabled: Boolean
+  name: string
   value: File | ''
   onChangeHandler: React.ChangeEventHandler<HTMLInputElement>
 }) {
   return (
     <Box sx={styles.wrapper}>
       <TextField
+        disabled={!enabled}
         type="file"
         label="Upload Avatar"
         InputLabelProps={{ shrink: true }}
         sx={styles.fileInput}
         onChange={onChangeHandler}
         inputProps={{ accept: '.jpg,.jpeg,.png' }}
-        name="picture"
+        name={name}
       />
       <TextField
         type="text"

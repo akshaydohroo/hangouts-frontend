@@ -7,6 +7,7 @@ import Navbar from '../components/navbar/Navbar'
 import { getUserData } from '../functions/user'
 import useAppDispatch from '../hooks/useAppDispatch'
 import Account from '../modules/Account' // Import the Account component
+import { userDataQueryKey } from '../queryKeyStore'
 import { removeAuthenticated, setAuthenticated } from '../redux/authenticated'
 import { setError } from '../redux/error'
 import {
@@ -17,7 +18,7 @@ import { ErrorDetails } from '../utils/types'
 
 export default function Dashboard() {
   const dispatch = useAppDispatch()
-  const userQuery = useQuery(['user', 'data'], {
+  const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
   })
@@ -41,7 +42,7 @@ export default function Dashboard() {
   }, [userData, dispatch])
 
   return (
-    <Box sx={styles.dashboard}>
+    <Stack sx={styles.dashboard}>
       <Navbar />
       <Routes>
         <Route path="/account" element={<Account />} />
@@ -58,12 +59,13 @@ export default function Dashboard() {
           }
         />
       </Routes>
-    </Box>
+    </Stack>
   )
 }
 const styles = {
   dashboard: {
-    maxHeight: 'wrap-content',
+    minHeight: '100%',
+    height: 'wrap-content',
     width: '100vw',
   },
 }

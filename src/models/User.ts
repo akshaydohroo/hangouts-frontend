@@ -3,22 +3,25 @@ import { validateEmail } from '../utils/functions'
 
 export type gender = 'Male' | 'Female' | 'Other' | ''
 
+export type UserAttributesChange = Omit<UserAttributes, 'id' | 'createdAt'>
+
 export type UserAttributes = {
   name: string
   id?: string
   email: string
-  picture: File | string
+  picture: File | ''
   userName: string
   password?: string
   birthDate?: string
   gender?: gender
+  visibility?: string
   createdAt?: string
 }
 export class User {
   public name: string = ''
   public id?: string
   public email: string = ''
-  public picture: File | string = ''
+  public picture: File | '' = ''
   public userName: string = ''
   public password?: string
   public birthDate?: string
@@ -76,6 +79,18 @@ export class User {
         }
       )
       return res.data.accessToken as string
+    } catch (err) {
+      throw err
+    }
+  }
+  static async dataUpdate(
+    userAttributesChange: UserAttributesChange
+  ): Promise<User> {
+    try {
+      const res = await backend.put('/user/data', userAttributesChange, {
+        withCredentials: true,
+      })
+      return res.data as User
     } catch (err) {
       throw err
     }

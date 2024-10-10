@@ -58,10 +58,9 @@ function App() {
         <GoogleOAuthProvider clientId={googleOAuthClientId}>
           <Container
             sx={{
-              minHeight: 'wrap-content',
+              height: '100vh',
               maxWidth: '100vw',
               overflowX: 'hidden',
-              height: 'wrap-content',
             }}
             disableGutters
             maxWidth={false}

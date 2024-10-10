@@ -13,6 +13,7 @@ import {
   UserFollowOptionsQuery,
   UsersOptionQuery,
 } from '../../models/UserFollower'
+import { userfollowOptionsQueryKey } from '../../queryKeyStore'
 import { convertTime, pageControl } from '../../utils/functions'
 import PaginationControl from '../common/PaginationControl'
 import UserSearchOption from './UserSearchOption'
@@ -24,28 +25,18 @@ export default function UserSearch() {
   const userFollowOptionsQuery = useQuery<
     UserFollowOptionsQuery | UsersOptionQuery,
     Error
-  >(
-    [
-      'follow',
-      'options',
-      {
-        searchString: inputValue,
-        page,
-      },
-    ],
-    {
-      queryFn: ({ queryKey }) => {
-        const { page, searchString } = queryKey[queryKey.length - 1] as {
-          searchString: string
-          page: number
-        }
-        return followUsersOptions(page, 5, searchString, isAuthenticated)
-      },
-      keepPreviousData: true,
-      enabled: inputValue.trim().length > 2,
-      staleTime: convertTime(30, 's', 'ms'),
-    }
-  )
+  >(userfollowOptionsQueryKey(inputValue, page), {
+    queryFn: ({ queryKey }) => {
+      const { page, searchString } = queryKey[queryKey.length - 1] as {
+        searchString: string
+        page: number
+      }
+      return followUsersOptions(page, 5, searchString, isAuthenticated)
+    },
+    keepPreviousData: true,
+    enabled: inputValue.trim().length > 2,
+    staleTime: convertTime(30, 's', 'ms'),
+  })
   if (userFollowOptionsQuery.isError) {
     throw userFollowOptionsQuery.error
   }

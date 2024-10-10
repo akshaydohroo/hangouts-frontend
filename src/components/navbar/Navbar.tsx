@@ -16,17 +16,18 @@ import { useNavigate } from 'react-router-dom'
 import { getUserData } from '../../functions/user'
 import useAppDispatch from '../../hooks/useAppDispatch'
 import useAppSelector from '../../hooks/useAppSelector'
+import { userDataQueryKey } from '../../queryKeyStore'
 import { toggleThemeMode } from '../../redux/themeMode'
 import { convertTime } from '../../utils/functions'
 import NavbarButton from './NavbarButton'
 import UserButton from './UserButton'
 import UserSearch from './UserSearch'
 import UserSearchDialog from './UserSearchDialog'
-export default function Navbar({}) {
+export default function Navbar() {
   const mode = useAppSelector(state => state.themeMode.value)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  const userQuery = useQuery(['user', 'data'], {
+  const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
   })
@@ -42,6 +43,7 @@ export default function Navbar({}) {
   const userSearchDialogToggle = () => {
     setuserSearchDialogState(prevState => !prevState)
   }
+  console.log(userQuery.data)
   return (
     <AppBar sx={styles.appBar(mode)} enableColorOnDark position="static">
       <Toolbar sx={styles.toolbar}>

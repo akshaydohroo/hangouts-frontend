@@ -3,9 +3,11 @@ import { useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { useNavigate } from 'react-router'
 import { ReactComponent as SignupSvg } from '../assets/icons/signup.svg'
-import FileUpload from '../components/Signup/FileUpload'
-import GenderInput from '../components/Signup/GenderInput'
+import FileUpload from '../components/common/FileUpload'
 import GoogleLogin from '../components/common/GoogleLogin'
+import EmailInput from '../components/Signup/EmailInput'
+import GenderInput from '../components/Signup/GenderInput'
+import UsernameInput from '../components/Signup/UsernameInput'
 import useAppDispatch from '../hooks/useAppDispatch'
 import { User, gender } from '../models/User'
 import { setError } from '../redux/error'
@@ -65,21 +67,13 @@ export default function Signup() {
             name="name"
             onChange={onChangeHandler}
           />
-          <TextField
-            type="username"
-            label="Username"
-            autoComplete="on"
+          <UsernameInput
             value={formData.userName}
-            onChange={onChangeHandler}
-            name="userName"
+            onValueChangeHandler={onChangeHandler}
           />
-          <TextField
-            type="email"
-            label="Email"
-            autoComplete="on"
+          <EmailInput
             value={formData.email}
-            onChange={onChangeHandler}
-            name="email"
+            onValueChangeHandler={onChangeHandler}
           />
           <TextField
             type="password"
@@ -99,12 +93,15 @@ export default function Signup() {
               name="birthDate"
             />
             <GenderInput
+              styles={styles.genderInputStyles}
               value={formData.gender as gender}
               onChangeHandler={onChangeHandler}
             />
           </Stack>
           <Stack direction="row" alignItems="center" sx={styles.fileAndSubmit}>
             <FileUpload
+              enabled={true}
+              name="picture"
               value={formData.picture as File | ''}
               onChangeHandler={onChangeHandler}
             />
@@ -127,7 +124,8 @@ export default function Signup() {
 }
 const styles = {
   signup: {
-    minHeight: '100vh',
+    minHeight: '100%',
+    height: 'wrap-content',
     width: '100vw',
     justifyContent: 'center',
     alignItems: 'center',
@@ -149,7 +147,7 @@ const styles = {
         md: '30vw',
       },
       '& > *': {
-        my: 1.5,
+        my: 1.8,
       },
     },
   },
@@ -158,19 +156,25 @@ const styles = {
     width: {
       xs: '90vw',
       sm: '70vw',
-      md: '53vw',
+      md: '50vw',
     },
     color: 'inherit',
+  },
+  genderInputStyles: {
+    genderInputForm: {
+      mx: 1,
+      minWidth: 120,
+    },
   },
   dobAndGender: {
     width: '100%',
     '& > *': {
-      flex: 1,
       width: '100%',
+      flex: 1,
     },
     '& > :first-of-type': {
       mb: {
-        xs: 1.5,
+        xs: 3.6,
         sm: 0,
       },
     },

@@ -11,6 +11,7 @@ import {
 import React from 'react'
 import { getUserNotifications } from '../../functions/notification'
 import useAppSelector from '../../hooks/useAppSelector'
+import { userTypeDataQueryKey } from '../../queryKeyStore'
 import { convertTime, pageControl } from '../../utils/functions'
 import PaginationControl from '../common/PaginationControl'
 import NotificationOption from './NotificationOption'
@@ -27,13 +28,7 @@ export default function NavbarButton({ type }: NavbarButtonProps) {
   const [page, setPage] = React.useState<number>(1)
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
   const useNavbarButtonQuery = useQuery({
-    queryKey: [
-      `${type}`,
-      'user',
-      {
-        page,
-      },
-    ],
+    queryKey: userTypeDataQueryKey(type, page),
     queryFn: ({ queryKey }) => {
       const { page } = queryKey[queryKey.length - 1] as {
         page: number

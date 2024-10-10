@@ -2,6 +2,7 @@ import { Avatar, Box, ListItem, Stack, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { getFollowingUsers } from '../../../functions/userFollower'
+import { followUsersQueryKey } from '../../../queryKeyStore'
 import { convertTime } from '../../../utils/functions'
 import CarouselControl from './CarouselControl'
 import UserStory from './UserStory'
@@ -9,13 +10,7 @@ import UserStory from './UserStory'
 export default function UserStories() {
   const [page, setPage] = React.useState<number>(1)
   const followingUserQuery = useQuery({
-    queryKey: [
-      'follows',
-      'users',
-      {
-        page,
-      },
-    ],
+    queryKey: followUsersQueryKey(page),
     queryFn: ({ queryKey }) => {
       const { page } = queryKey[queryKey.length - 1] as {
         page: number
