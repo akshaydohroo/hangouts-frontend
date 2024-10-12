@@ -9,6 +9,7 @@ import EmailInput from '../components/Signup/EmailInput'
 import GenderInput from '../components/Signup/GenderInput'
 import UsernameInput from '../components/Signup/UsernameInput'
 import useAppDispatch from '../hooks/useAppDispatch'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { User, gender } from '../models/User'
 import { setError } from '../redux/error'
 import { ErrorDetails } from '../utils/types'
@@ -17,6 +18,7 @@ export default function Signup() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const isMobile = useIsMobile()
   const [formData, setFormData] = React.useState<User>(
     new User({
       name: '',
@@ -47,7 +49,7 @@ export default function Signup() {
           onSubmit={event => {
             event.preventDefault()
             formData
-              .signin()
+              .signin(isMobile)
               .then(() => {
                 return queryClient.resetQueries()
               })

@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router'
 import { ReactComponent as LoginSvg } from '../assets/icons/login.svg'
 import GoogleLogin from '../components/common/GoogleLogin'
 import useAppDispatch from '../hooks/useAppDispatch'
+import { useIsMobile } from '../hooks/useIsMobile'
 import { User } from '../models/User'
 import { setError } from '../redux/error'
 import { ErrorDetails } from '../utils/types'
@@ -14,6 +15,7 @@ export default function Login() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const queryClient = useQueryClient()
+  const isMobile = useIsMobile()
   const [loginForm, setLoginForm] = React.useState<{
     userId: string
     password: string
@@ -34,7 +36,7 @@ export default function Login() {
         <form
           onSubmit={event => {
             event.preventDefault()
-            User.login(loginForm.userId, loginForm.password)
+            User.login(loginForm.userId, loginForm.password, isMobile)
               .then(() => {
                 return queryClient.resetQueries()
               })

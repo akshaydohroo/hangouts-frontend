@@ -1,18 +1,26 @@
 import { Avatar, IconButton } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
+import { Story } from '../../../models/Story'
 import { User } from '../../../models/User'
+import { userStoriesQueryKey } from '../../../queryKeyStore'
+import { convertTime } from '../../../utils/functions'
 
 export default function UserStory({
-  followingUser,
+  user,
 }: {
-  followingUser: Pick<User, 'id' | 'userName' | 'picture' | 'name'>
+  user: Pick<User, 'id' | 'userName' | 'picture' | 'name'>
 }) {
-  const story = followingUser
+  const userStoriesQuery = useQuery({
+    queryKey: userStoriesQueryKey(),
+    queryFn: () => {
+      return Story.getStories()
+    },
+    staleTime: convertTime(5, 'min', 'ms'),
+  })
+  console.log(userStoriesQuery.data)
   return (
     <IconButton sx={styles.avatarIconButton}>
-      <Avatar
-        src={followingUser.picture as string}
-        sx={{ ...styles.avatar }}
-      ></Avatar>
+      <Avatar src={user.picture as string} sx={{ ...styles.avatar }}></Avatar>
     </IconButton>
   )
 }

@@ -1,10 +1,12 @@
 import { Avatar, Box, ListItem, Stack, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
+import { getUserData } from '../../../functions/user'
 import { getFollowingUsers } from '../../../functions/userFollower'
-import { followUsersQueryKey } from '../../../queryKeyStore'
+import { followUsersQueryKey, userDataQueryKey } from '../../../queryKeyStore'
 import { convertTime } from '../../../utils/functions'
 import CarouselControl from './CarouselControl'
+import FollowingUserStory from './FollowingUserStory'
 import UserStory from './UserStory'
 
 export default function UserStories() {
@@ -20,29 +22,49 @@ export default function UserStories() {
     staleTime: convertTime(5, 'min', 'ms'),
     keepPreviousData: true,
   })
+  const userQuery = useQuery(userDataQueryKey, {
+    queryFn: () => getUserData(),
+    staleTime: convertTime(5, 'min', 'ms'),
+  })
   const carouselRef = React.useRef<HTMLDivElement | null>(null)
-  if (followingUserQuery.isError) {
+  if (followingUserQuery.isError && userQuery.isError) {
     return <></>
   }
-  if (followingUserQuery.isLoading) {
+  if (followingUserQuery.isLoading && userQuery.isLoading) {
     return <></>
   }
   return (
     <Box sx={styles.wrapper}>
       <Stack direction="row" sx={styles.carousel} ref={carouselRef}>
-        {followingUserQuery.data.rows.map(followingUser => (
-          <ListItem key={followingUser.id}>
-            <UserStory followingUser={followingUser} />
+        {userQuery.data && (
+          <ListItem key={userQuery.data.id as string}>
+            <UserStory user={userQuery.data} />
           </ListItem>
-        ))}
-        {followingUserQuery.data.rows.length === 0 && (
+        )}
+        {followingUserQuery.data && (
           <>
-            {Array.from({ length: 2 }).map((ele, idx) => (
-              <Avatar sx={{ height: 60, width: 60, mx: 1 }} key={idx}></Avatar>
+            {followingUserQuery.data.rows.map((followingUser: any) => (
+              <ListItem key={followingUser.id}>
+                <FollowingUserStory followingUser={followingUser} />
+              </ListItem>
             ))}
-            <Typography variant="subtitle2" color="MenuText" fontWeight="500">
-              Stories of people you follow will appear here
-            </Typography>
+            {followingUserQuery.data.rows.length === 0 && (
+              <>
+                {Array.from({ length: 2 }).map((_, idx) => (
+                  <Avatar
+                    sx={{ height: 60, width: 60, mx: 1 }}
+                    key={idx}
+                  ></Avatar>
+                ))}
+                <Typography
+                  variant="subtitle2"
+                  color="MenuText"
+                  fontWeight="500"
+                >
+                  Stories of people you follow will appear here
+                </Typography>
+              </>
+            )}
           </>
         )}
       </Stack>

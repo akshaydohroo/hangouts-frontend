@@ -16,7 +16,8 @@ export default function LogoutMenuItem({
   async function onClickLogout() {
     try {
       await User.logout()
-      await queryClient.resetQueries()
+      console.log('logout')
+      await queryClient.cancelQueries()
       dispatch(
         setSnackbar({
           message: 'You have logged out successfully',

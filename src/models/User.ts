@@ -31,7 +31,7 @@ export class User {
     Object.assign(this, params)
   }
 
-  async signin(): Promise<string> {
+  async signin(isMobile: boolean): Promise<string> {
     const fieldsToIgnore = ['id', 'createdAt']
     try {
       for (let key in this) {
@@ -50,6 +50,14 @@ export class User {
           withCredentials: true,
         }
       )
+      const accessToken = res.data.accessToken as string
+      const refreshToken = res.data.refreshToken as string
+      if (accessToken && isMobile) {
+        localStorage.setItem('accessToken', accessToken)
+      }
+      if (refreshToken && isMobile) {
+        localStorage.setItem('refreshToken', refreshToken)
+      }
       return res.data.accessToken as string
     } catch (error) {
       throw error
@@ -57,6 +65,8 @@ export class User {
   }
   static async logout(): Promise<void> {
     try {
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('refreshToken')
       await backend.get('/auth/logout', {
         withCredentials: true,
       })
@@ -64,7 +74,11 @@ export class User {
       throw err
     }
   }
-  static async login(userId: string, password: string): Promise<string> {
+  static async login(
+    userId: string,
+    password: string,
+    isMobile: boolean
+  ): Promise<string> {
     try {
       if (!userId) throw Error('Username or Email expected')
       if (!password) throw Error('Password Expected')
@@ -78,6 +92,15 @@ export class User {
           withCredentials: true,
         }
       )
+      const accessToken = res.data.accessToken as string
+      const refreshToken = res.data.refreshToken as string
+      if (accessToken && isMobile) {
+        localStorage.setItem('accessToken', accessToken)
+      }
+      if (refreshToken && isMobile) {
+        localStorage.setItem('refreshToken', refreshToken)
+      }
+
       return res.data.accessToken as string
     } catch (err) {
       throw err

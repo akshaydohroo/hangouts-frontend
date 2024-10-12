@@ -13,6 +13,14 @@ const userTypeDataQueryKey = (type: string, page: number) => [
     page,
   },
 ]
+const followUserStoriesQueryKey = (userId: string) => [
+  'story',
+  'following',
+  {
+    userId,
+  },
+]
+const userStoriesQueryKey = () => ['story', 'user']
 const userfollowOptionsQueryKey = (searchString: string, page: number) => [
   'follow',
   'options',
@@ -35,8 +43,10 @@ const emailAvailableQueryKey = (email: string) => [
 
 export {
   emailAvailableQueryKey,
+  followUserStoriesQueryKey,
   followUsersQueryKey,
   userDataQueryKey,
+  userStoriesQueryKey,
   userTypeDataQueryKey,
   userfollowOptionsQueryKey,
   usernameAvailableQueryKey,
