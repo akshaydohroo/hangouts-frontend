@@ -61,6 +61,8 @@ export default function CarouselControl({
   const [disabled, setDisabledButton] = useState<direction | null | 'both'>(
     null
   )
+  console.log(hasNextPage + ' ' + disabled)
+
   useEffect(() => {
     if (!carouselRef.current) return
     const carousel = carouselRef.current
@@ -82,7 +84,7 @@ export default function CarouselControl({
     }
   }, [carouselRef, page])
   useEffect(() => {
-    if (disabled === 'right' && hasNextPage) {
+    if (disabled !== 'left' && hasNextPage) {
       fetchNextPage()
     }
   }, [disabled, hasNextPage, fetchNextPage])
