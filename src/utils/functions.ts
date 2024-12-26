@@ -1,3 +1,4 @@
+import { backend } from '../api'
 import { ErrorDetails } from './types'
 export function parseJWT<T>(token: string): T {
   const base64Url = token.split('.')[1]
@@ -78,20 +79,38 @@ export const removeCookie = (name: string) => {
   document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
 }
 export function pageControl(
-  setPage: React.Dispatch<React.SetStateAction<number>>,
-  totalPages: number
-): { inc: () => void; dec: () => void } {
+  setPage: React.Dispatch<React.SetStateAction<number | null>>,
+  totalPages: number,
+  continuous: boolean = true
+): {
+  inc: () => void
+  dec: () => void
+  set: (page: number) => void
+  getTotalPages: () => number
+} {
   return {
     inc: () => {
-      setPage(oldPage => {
-        return Math.max(1, (oldPage + 1) % (totalPages + 1))
+      setPage((oldPage: number | null) => {
+        if (oldPage == null) return null
+        return continuous
+          ? Math.max(1, (oldPage + 1) % (totalPages + 1))
+          : Math.min(oldPage + 1, totalPages - 1)
       })
     },
     dec: () => {
-      setPage(oldPage => {
-        return oldPage - 1 === 0 ? totalPages : oldPage - 1
+      setPage((oldPage: number | null) => {
+        if (oldPage == null) return null
+        return continuous
+          ? oldPage - 1 === 0
+            ? totalPages
+            : oldPage - 1
+          : Math.max(oldPage - 1, 0)
       })
     },
+    set: (page: number | null) => {
+      setPage(page)
+    },
+    getTotalPages: () => totalPages,
   }
 }
 export function timeSince(date: Date): string {
@@ -141,4 +160,56 @@ export function extractErrorDetailFromErrorQuery(error: any) {
     errorCause
   )
   return errorDetails
+}
+
+export function uploadFileInChunks(
+  file: File,
+  chunkSize = 2 * 1024 * 1024,
+  endPoint: string
+): Promise<void> {
+  const totalChunks = Math.ceil(file.size / chunkSize)
+
+  let currentChunk = 0
+
+  const uploadNextChunk = (): Promise<void> => {
+    const start = currentChunk * chunkSize
+    const end = Math.min(start + chunkSize, file.size)
+    const chunk = file.slice(start, end) // Get the current chunk of the file
+
+    // Send the chunk to the backend using fetch
+    return new Promise<void>((resolve, reject) => {
+      backend
+        .postForm(
+          endPoint,
+          {
+            chunk: chunk,
+            currentChunk: currentChunk + 1,
+            totalChunks: totalChunks,
+            filename: file.name,
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then(res => {
+          // If there are more chunks to upload, continue with the next chunk
+          currentChunk++
+          if (currentChunk < totalChunks) {
+            uploadNextChunk()
+          }
+          console.log(res)
+          console.log(
+            'Chunk at index ' + (currentChunk - 1) + ' uploaded successfully'
+          )
+          resolve()
+        })
+        .catch(error => {
+          console.error('Error uploading chunk', error)
+          reject(error)
+        })
+    })
+  }
+
+  // Start uploading the first chunk
+  return uploadNextChunk()
 }

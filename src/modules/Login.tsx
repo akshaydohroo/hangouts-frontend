@@ -2,7 +2,7 @@ import { AccountCircle } from '@mui/icons-material'
 import KeyIcon from '@mui/icons-material/Key'
 import { Button, Stack, SvgIcon, TextField } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ReactComponent as LoginSvg } from '../assets/icons/login.svg'
 import GoogleLogin from '../components/common/GoogleLogin'
@@ -16,7 +16,7 @@ export default function Login() {
   const dispatch = useAppDispatch()
   const queryClient = useQueryClient()
   const isMobile = useIsMobile()
-  const [loginForm, setLoginForm] = React.useState<{
+  const [loginForm, setLoginForm] = useState<{
     userId: string
     password: string
   }>({

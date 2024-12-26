@@ -4,7 +4,7 @@ import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import * as React from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { followUsersOptions } from '../../functions/userFollower'
 import useAppSelector from '../../hooks/useAppSelector'
 import {
@@ -21,8 +21,8 @@ export default function UserSearchDialog({
   open: boolean
   handleClose: () => void
 }) {
-  const [inputValue, setInputValue] = React.useState<string>('')
-  const descriptionElementRef = React.useRef<HTMLElement>(null)
+  const [inputValue, setInputValue] = useState<string>('')
+  const descriptionElementRef = useRef<HTMLDivElement>(null)
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
 
   const {
@@ -59,8 +59,8 @@ export default function UserSearchDialog({
     }
   )
 
-  const observer = React.useRef<IntersectionObserver>()
-  const lastUserElementRef = React.useCallback(
+  const observer = useRef<IntersectionObserver>()
+  const lastUserElementRef = useCallback(
     (node: HTMLDivElement) => {
       if (isFetchingNextPage) return
       if (observer.current) observer.current.disconnect()
@@ -80,7 +80,7 @@ export default function UserSearchDialog({
 
   const options = data?.pages.flatMap(page => page.rows) || []
   const page = data?.pages.length || 0
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       const { current: descriptionElement } = descriptionElementRef
       if (descriptionElement !== null) {
@@ -97,6 +97,7 @@ export default function UserSearchDialog({
       aria-labelledby="user-search-dialog"
       aria-describedby="user-search-dialog-description"
       sx={styles.dialog}
+      ref={descriptionElementRef}
     >
       <DialogTitle id="scroll-dialog-title">
         <TextField

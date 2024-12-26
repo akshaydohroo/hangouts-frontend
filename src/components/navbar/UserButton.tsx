@@ -1,5 +1,5 @@
 import { Avatar, Box, IconButton, Menu } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import useAppSelector from '../../hooks/useAppSelector'
 import AccountMenuItem from '../profileMenuItems/AccountMenuItem'
 import LoginMenuItem from '../profileMenuItems/LoginMenuItem'
@@ -12,7 +12,7 @@ export default function UserButton({
   picture: string | undefined
 }) {
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)

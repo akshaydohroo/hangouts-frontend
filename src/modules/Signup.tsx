@@ -1,9 +1,9 @@
 import { Button, Stack, SvgIcon, TextField } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { ReactComponent as SignupSvg } from '../assets/icons/signup.svg'
-import FileUpload from '../components/common/FileUpload'
+import AvatarUpload from '../components/common/AvatarUpload'
 import GoogleLogin from '../components/common/GoogleLogin'
 import EmailInput from '../components/Signup/EmailInput'
 import GenderInput from '../components/Signup/GenderInput'
@@ -19,7 +19,7 @@ export default function Signup() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const isMobile = useIsMobile()
-  const [formData, setFormData] = React.useState<User>(
+  const [formData, setFormData] = useState<User>(
     new User({
       name: '',
       email: '',
@@ -101,7 +101,7 @@ export default function Signup() {
             />
           </Stack>
           <Stack direction="row" alignItems="center" sx={styles.fileAndSubmit}>
-            <FileUpload
+            <AvatarUpload
               enabled={true}
               name="picture"
               value={formData.picture as File | ''}

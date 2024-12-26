@@ -39,7 +39,7 @@ export default function UsernameInput({
     } else if (setErrorExists != null) {
       setErrorExists(false)
     }
-  }, [error, setError])
+  }, [error, setError, setErrorExists])
   useEffect(() => {
     if (
       usernameAvailableQuery.isFetched &&

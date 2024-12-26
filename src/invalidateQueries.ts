@@ -33,3 +33,28 @@ export const invalidateNotificationsUserQuery = (
   }
   return false
 }
+
+export const invalidateFollowingStoryLike = (
+  queryKey: QueryKey,
+  storyId: string
+): boolean => {
+  if (queryKey.length < 4) return false
+  if (
+    JSON.stringify(queryKey.slice(0, 3)) !==
+    JSON.stringify(['story', 'following', 'like'])
+  )
+    return false
+  if ((queryKey[3] as { storyId: string }).storyId === storyId) return true
+
+  return false
+}
+
+export const invalidateUserStories = (queryKey: QueryKey): boolean => {
+  if (queryKey.length < 2) return false
+  if (
+    JSON.stringify(queryKey.slice(0, 2)) !== JSON.stringify(['story', 'user'])
+  )
+    return false
+
+  return true
+}

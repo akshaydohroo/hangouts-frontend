@@ -25,7 +25,7 @@ export default function PasswordChange({
     } else if (setErrorExists != null) {
       setErrorExists(false)
     }
-  }, [error, setError])
+  }, [error, setError, setErrorExists])
   useEffect(() => {
     if (
       password.length > 0 &&
@@ -46,7 +46,7 @@ export default function PasswordChange({
       }
       setError(null)
     }
-  }, [password, retypePassword, error, setError])
+  }, [password, retypePassword, error, setError, onChangeHandler])
   return (
     <Stack sx={{ ...sxStyles?.inputsWrapper }}>
       <TextField

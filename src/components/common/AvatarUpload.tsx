@@ -2,7 +2,7 @@ import { AccountCircle } from '@mui/icons-material'
 import { Box, InputAdornment, TextField } from '@mui/material'
 import React from 'react'
 
-export default function FileUpload({
+export default function AvatarUpload({
   enabled,
   name,
   value,

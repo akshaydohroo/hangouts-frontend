@@ -6,7 +6,7 @@ import {
   bindPopover,
   usePopupState,
 } from 'material-ui-popup-state/hooks'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { followUsersOptions } from '../../functions/userFollower'
 import useAppSelector from '../../hooks/useAppSelector'
 import {
@@ -19,8 +19,8 @@ import PaginationControl from '../common/PaginationControl'
 import UserSearchOption from './UserSearchOption'
 
 export default function UserSearch() {
-  const [inputValue, setInputValue] = React.useState<string>('')
-  const [page, setPage] = React.useState<number>(1)
+  const [inputValue, setInputValue] = useState<string>('')
+  const [page, setPage] = useState<number>(1)
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
   const userFollowOptionsQuery = useQuery<
     UserFollowOptionsQuery | UsersOptionQuery,
@@ -46,8 +46,11 @@ export default function UserSearch() {
     variant: 'popover',
     popupId: 'user-follow-options',
   })
-  const pageController = React.useMemo(() => {
-    return pageControl(setPage, totalPages)
+  const pageController = useMemo(() => {
+    return pageControl(
+      setPage as React.Dispatch<React.SetStateAction<number | null>>,
+      totalPages
+    )
   }, [totalPages, setPage])
   return (
     <Box sx={styles.wrapper}>

@@ -63,7 +63,7 @@ export async function acceptUserFollowRequest(senderId: string): Promise<void> {
     throw err
   }
 }
-export async function getFollowingUsers(page: number) {
+export async function getFollowingUsers(page: number, limit: number) {
   try {
     const res = await backend.get<{
       rows: Pick<User, 'id' | 'userName' | 'picture' | 'name'>[]

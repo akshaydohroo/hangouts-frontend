@@ -3,7 +3,7 @@ import { backendBaseUrl } from '../config'
 
 export const backend = axios.create({
   baseURL: backendBaseUrl,
-  timeout: process.env.NODE_ENV === 'development' ? 5000 : 15000,
+  timeout: process.env.NODE_ENV === 'development' ? 15000 : 15000,
 })
 backend.interceptors.request.use(
   function (config) {

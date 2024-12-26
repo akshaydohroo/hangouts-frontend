@@ -8,7 +8,7 @@ import {
   bindPopover,
   usePopupState,
 } from 'material-ui-popup-state/hooks'
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import { getUserNotifications } from '../../functions/notification'
 import useAppSelector from '../../hooks/useAppSelector'
 import { userTypeDataQueryKey } from '../../queryKeyStore'
@@ -25,7 +25,7 @@ type NavbarButtonProps = {
 }
 
 export default function NavbarButton({ type }: NavbarButtonProps) {
-  const [page, setPage] = React.useState<number>(1)
+  const [page, setPage] = useState<number>(1)
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
   const useNavbarButtonQuery = useQuery({
     queryKey: userTypeDataQueryKey(type, page),
@@ -43,8 +43,11 @@ export default function NavbarButton({ type }: NavbarButtonProps) {
     console.error(useNavbarButtonQuery.error)
   }
   const { rows, totalPages = 0, count = 0 } = useNavbarButtonQuery.data || {}
-  const pageController = React.useMemo(() => {
-    return pageControl(setPage, totalPages)
+  const pageController = useMemo(() => {
+    return pageControl(
+      setPage as React.Dispatch<React.SetStateAction<number | null>>,
+      totalPages
+    )
   }, [totalPages, setPage])
   const popupState = usePopupState({
     variant: 'popover',

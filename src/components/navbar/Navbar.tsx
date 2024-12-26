@@ -24,12 +24,14 @@ import UserButton from './UserButton'
 import UserSearch from './UserSearch'
 import UserSearchDialog from './UserSearchDialog'
 export default function Navbar() {
+  const isAuthenticated = useAppSelector(state => state.authenticated.value)
   const mode = useAppSelector(state => state.themeMode.value)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
+    enabled: isAuthenticated,
   })
   const isMobileScreen = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down('md')
@@ -43,7 +45,6 @@ export default function Navbar() {
   const userSearchDialogToggle = () => {
     setuserSearchDialogState(prevState => !prevState)
   }
-  console.log(userQuery.data)
   return (
     <AppBar sx={styles.appBar(mode)} enableColorOnDark position="static">
       <Toolbar sx={styles.toolbar}>

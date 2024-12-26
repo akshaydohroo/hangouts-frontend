@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { ReactComponent as AccountSVG } from '../assets/icons/account_settings.svg'
 import PasswordChange from '../components/account/PasswordChange'
 import VisibitySelect from '../components/account/VisibilitySelect'
-import FileUpload from '../components/common/FileUpload'
+import AvatarUpload from '../components/common/AvatarUpload'
 import EmailInput from '../components/Signup/EmailInput'
 import GenderInput from '../components/Signup/GenderInput'
 import UsernameInput from '../components/Signup/UsernameInput'
@@ -176,7 +176,7 @@ export default function Account() {
               value={formData.visibility}
               onChangeHandler={onChangeHandler}
             />
-            <FileUpload
+            <AvatarUpload
               enabled={formEnabled}
               name={'picture'}
               value={formData.picture}

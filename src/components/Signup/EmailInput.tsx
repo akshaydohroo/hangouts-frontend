@@ -38,7 +38,7 @@ export default function EmailInput({
     } else if (setErrorExists != null) {
       setErrorExists(false)
     }
-  }, [error, setError])
+  }, [error, setError, setErrorExists])
   useEffect(() => {
     if (emailAvailableQuery.isFetched && emailAvailableQuery.data?.exists) {
       setError(new Error('Email not available'))

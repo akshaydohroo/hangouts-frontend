@@ -2,7 +2,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import { IconButton, debounce } from '@mui/material'
 import { grey } from '@mui/material/colors'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 type direction = 'left' | 'right'
 function disableButtons(
@@ -38,8 +38,14 @@ const disableButtonsEvent = debounce(
 )
 export default function CarouselControl({
   carouselRef,
+  hasNextPage,
+  fetchNextPage,
+  page,
 }: {
   carouselRef: React.RefObject<HTMLDivElement>
+  hasNextPage: boolean | undefined
+  fetchNextPage: () => void
+  page: number
 }) {
   function onClickCarouselControl(
     e: React.MouseEvent<HTMLButtonElement>,
@@ -52,10 +58,10 @@ export default function CarouselControl({
       carouselRef.current.scrollLeft += carouselRef.current.offsetWidth
     }
   }
-  const [disabled, setDisabledButton] = React.useState<
-    direction | null | 'both'
-  >(null)
-  React.useEffect(() => {
+  const [disabled, setDisabledButton] = useState<direction | null | 'both'>(
+    null
+  )
+  useEffect(() => {
     if (!carouselRef.current) return
     const carousel = carouselRef.current
     carousel.addEventListener('scroll', ev =>
@@ -74,7 +80,12 @@ export default function CarouselControl({
         disableButtonsEvent(carousel, setDisabledButton)
       )
     }
-  }, [carouselRef])
+  }, [carouselRef, page])
+  useEffect(() => {
+    if (disabled === 'right' && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [disabled, hasNextPage, fetchNextPage])
   return (
     <>
       <IconButton

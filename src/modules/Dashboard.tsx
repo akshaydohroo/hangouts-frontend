@@ -1,11 +1,12 @@
 import { Box, Stack } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import UserStories from '../components/dashboard/Story/UserStories'
 import Navbar from '../components/navbar/Navbar'
 import { getUserData } from '../functions/user'
 import useAppDispatch from '../hooks/useAppDispatch'
+import useAppSelector from '../hooks/useAppSelector'
 import Account from '../modules/Account' // Import the Account component
 import { userDataQueryKey } from '../queryKeyStore'
 import { removeAuthenticated, setAuthenticated } from '../redux/authenticated'
@@ -17,11 +18,18 @@ import {
 import { ErrorDetails } from '../utils/types'
 
 export default function Dashboard() {
+  const isAuthenticated = useAppSelector(state => state.authenticated.value)
+  const queryClient = useQueryClient()
   const dispatch = useAppDispatch()
   const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
+    enabled: isAuthenticated,
   })
+
+  useEffect(() => {
+    queryClient.resetQueries()
+  }, [])
 
   if (userQuery.isError) {
     dispatch(setError(extractErrorDetailFromErrorQuery(userQuery.error as any)))

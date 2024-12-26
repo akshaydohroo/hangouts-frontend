@@ -1,27 +1,9 @@
-const userDataQueryKey = ['user', 'data']
-const followUsersQueryKey = (page: number) => [
-  'user',
-  'follows',
-  {
-    page,
-  },
-]
-const userTypeDataQueryKey = (type: string, page: number) => [
-  'user',
-  `${type}`,
-  {
-    page,
-  },
-]
-const followUserStoriesQueryKey = (userId: string) => [
-  'story',
-  'following',
-  {
-    userId,
-  },
-]
-const userStoriesQueryKey = () => ['story', 'user']
-const userfollowOptionsQueryKey = (searchString: string, page: number) => [
+export const userDataQueryKey = ['user', 'data']
+export const followUsersQueryKey = () => ['user', 'follows']
+export const userfollowOptionsQueryKey = (
+  searchString: string,
+  page: number
+) => [
   'follow',
   'options',
   {
@@ -29,25 +11,40 @@ const userfollowOptionsQueryKey = (searchString: string, page: number) => [
     page,
   },
 ]
+export const userTypeDataQueryKey = (type: string, page: number) => [
+  'user',
+  `${type}`,
+  {
+    page,
+  },
+]
+export const followingUsersWithStoriesQueryKey = ['story', 'following', 'users']
+export const followUserStoriesQueryKey = (followingId: string) => [
+  'story',
+  'following',
+  {
+    followingId,
+  },
+]
 
-const usernameAvailableQueryKey = (username: string) => [
+export const storyFollowingLikeQueryKey = (storyId: string) => [
+  'story',
+  'following',
+  'like',
+  {
+    storyId,
+  },
+]
+
+export const userStoriesQueryKey = () => ['story', 'user']
+
+export const usernameAvailableQueryKey = (username: string) => [
   'username',
   'available',
   { username },
 ]
-const emailAvailableQueryKey = (email: string) => [
+export const emailAvailableQueryKey = (email: string) => [
   'email',
   'available',
   { email },
 ]
-
-export {
-  emailAvailableQueryKey,
-  followUserStoriesQueryKey,
-  followUsersQueryKey,
-  userDataQueryKey,
-  userStoriesQueryKey,
-  userTypeDataQueryKey,
-  userfollowOptionsQueryKey,
-  usernameAvailableQueryKey,
-}

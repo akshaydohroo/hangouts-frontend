@@ -1,27 +1,25 @@
 import { Avatar, IconButton } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
-import { Story } from '../../../models/Story'
 import { User } from '../../../models/User'
-import { userStoriesQueryKey } from '../../../queryKeyStore'
-import { convertTime } from '../../../utils/functions'
+import StoryAvatarWrapper from './StoryAvatarWrapper'
 
 export default function UserStory({
   user,
+  storiesCount,
+  setSelfStoryDialogOpen,
 }: {
   user: Pick<User, 'id' | 'userName' | 'picture' | 'name'>
+  storiesCount: number | undefined
+  setSelfStoryDialogOpen: (open: boolean) => void
 }) {
-  const userStoriesQuery = useQuery({
-    queryKey: userStoriesQueryKey(),
-    queryFn: () => {
-      return Story.getStories()
-    },
-    staleTime: convertTime(5, 'min', 'ms'),
-  })
-  console.log(userStoriesQuery.data)
   return (
-    <IconButton sx={styles.avatarIconButton}>
-      <Avatar src={user.picture as string} sx={{ ...styles.avatar }}></Avatar>
-    </IconButton>
+    <StoryAvatarWrapper storyCount={storiesCount ?? 0}>
+      <IconButton
+        sx={styles.avatarIconButton}
+        onClick={() => setSelfStoryDialogOpen(true)}
+      >
+        <Avatar src={user.picture as string} sx={{ ...styles.avatar }}></Avatar>
+      </IconButton>
+    </StoryAvatarWrapper>
   )
 }
 const styles = {
@@ -31,7 +29,7 @@ const styles = {
     '&:hover': {
       backgroundColor: 'transparent',
     },
-    mx: 1,
+    p: 0,
   },
   avatar: {
     height: 60,
