@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useEffect, useMemo } from 'react'
 import { Outlet } from 'react-router-dom'
+import { backend } from './api'
 import './App.css'
 import RootSnackBar from './components/common/RootSnackbar'
 import { googleOAuthClientId } from './config'
@@ -32,6 +33,13 @@ function App() {
   const dispatch = useAppDispatch()
   const mode = useAppSelector(state => state.themeMode.value)
   const error = useAppSelector(state => state.error.value)
+
+  useEffect(() => {
+    backend.get('/health').then(res => {
+      console.log(res.data)
+    })
+  }, [])
+
   useEffect(() => {
     if (error != null) {
       dispatch(
