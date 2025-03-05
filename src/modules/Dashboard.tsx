@@ -24,7 +24,6 @@ export default function Dashboard() {
   const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
-    enabled: isAuthenticated,
   })
 
   useEffect(() => {
