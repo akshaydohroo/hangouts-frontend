@@ -1,5 +1,6 @@
 import { SkipNext, SkipPrevious } from '@mui/icons-material'
 import { IconButton, Skeleton, Stack } from '@mui/material'
+import useAppSelector from '../../../hooks/useAppSelector'
 import { Story } from '../../../models/Story'
 import ProgressIndexBar from '../../common/ProgressIndexBar'
 import StoryReact from './StoryReact'
@@ -25,9 +26,11 @@ export default function StoryViewer({
   setStoryLoading: (loading: boolean) => void
   setCreateStory: ((create: boolean) => void) | undefined
 }) {
+  const isAuthenticated = useAppSelector(state => state.authenticated.value)
+
   const handleImageLoad = async () => {
     setStoryLoading(false)
-    story?.storyId && (await Story.addViewer(story.storyId))
+    story?.storyId && isAuthenticated && (await Story.addViewer(story.storyId))
   }
   const totalStories = storyController.getTotalPages()
 
@@ -84,7 +87,9 @@ export default function StoryViewer({
           />
         </Stack>
       )}
-      {story && <StoryReact disabled={storyLoading} storyId={story.storyId} />}
+      {story && isAuthenticated && (
+        <StoryReact disabled={storyLoading} storyId={story.storyId} />
+      )}
       <IconButton
         onClick={handleStoryNext}
         sx={styles.nextButton as any}

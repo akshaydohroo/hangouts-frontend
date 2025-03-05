@@ -1,8 +1,9 @@
 import { Avatar, Box, ListItem, Stack, Typography } from '@mui/material'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   getFollowingUserWithStories,
+  getPublicUserWithStories,
   getStories,
 } from '../../../functions/story'
 import { getUserData } from '../../../functions/user'
@@ -26,7 +27,8 @@ export default function UserStories() {
   const followingUserWithStoriesQuery = useInfiniteQuery({
     queryKey: followingUsersWithStoriesQueryKey,
     queryFn: ({ queryKey, pageParam = 1 }) => {
-      return getFollowingUserWithStories(pageParam, 10)
+      if (isAuthenticated) return getFollowingUserWithStories(pageParam, 30)
+      else return getPublicUserWithStories(pageParam, 30)
     },
     staleTime: convertTime(5, 'min', 'ms'),
     keepPreviousData: true,
@@ -36,12 +38,15 @@ export default function UserStories() {
       }
       return undefined
     },
-    enabled: isAuthenticated,
   })
+  useEffect(() => {
+    followingUserWithStoriesQuery.refetch()
+  }, [isAuthenticated, followingUserWithStoriesQuery.data])
 
   const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
+    enabled: isAuthenticated,
   })
 
   const userStoriesQuery = useQuery({
@@ -52,6 +57,8 @@ export default function UserStories() {
     staleTime: convertTime(5, 'min', 'ms'),
     enabled: isAuthenticated,
   })
+
+  console.log(isAuthenticated + 'isAuthenticated')
 
   const userStories = userStoriesQuery.data
 
@@ -107,7 +114,7 @@ export default function UserStories() {
 
       <Box sx={styles.wrapper}>
         <Stack direction="row" sx={styles.carousel} ref={carouselRef}>
-          {userQuery.data && (
+          {userQuery.data ? (
             <ListItem key={userQuery.data.id as string}>
               <UserStory
                 user={userQuery.data}
@@ -115,6 +122,8 @@ export default function UserStories() {
                 setSelfStoryDialogOpen={setSelfStoryDialogOpen}
               />
             </ListItem>
+          ) : (
+            <Avatar sx={{ height: 65, width: 65, ml: 3.5, mr: 2.5 }}></Avatar>
           )}
           {followingUserWithStoriesQuery.data && (
             <>

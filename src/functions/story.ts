@@ -27,6 +27,24 @@ export async function getFollowingUserWithStories(
     throw error
   }
 }
+export async function getPublicUserWithStories(
+  page: number,
+  limit: number = 10
+): Promise<followingUserWithStoriesQuery> {
+  try {
+    const res = await backend.get('/guest/users/stories/', {
+      params: {
+        page,
+        limit,
+      },
+      withCredentials: true,
+    })
+    return res.data as followingUserWithStoriesQuery
+  } catch (error) {
+    throw error
+  }
+}
+
 export async function getStories(): Promise<Story[]> {
   try {
     const res = await backend.get('/story/user', {
