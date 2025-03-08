@@ -32,6 +32,8 @@ export default function UserStoryDialog({
 
   const [createStory, setCreateStory] = useState(false)
 
+  const [storyHold, setStoryHold] = useState<boolean>(false)
+
   const storyViewerIndexController = useMemo(() => {
     return pageControl(setStoryViewIndex, stories?.length ?? 0, false)
   }, [setStoryViewIndex, stories?.length])
@@ -47,7 +49,7 @@ export default function UserStoryDialog({
 
   useEffect(() => {
     let timeout: NodeJS.Timeout
-    if (storyLoading || stories === undefined) {
+    if (storyLoading || stories === undefined || storyHold) {
       return
     }
     if (stories.length === 0) {
@@ -72,6 +74,7 @@ export default function UserStoryDialog({
     storyViewerIndexController,
     storyLoading,
     setCreateStory,
+    storyHold,
   ])
 
   return (
@@ -110,6 +113,8 @@ export default function UserStoryDialog({
             storyLoading={storyLoading}
             setStoryLoading={setStoryLoading}
             setCreateStory={setCreateStory}
+            storyHold={storyHold}
+            setStoryHold={setStoryHold}
           />
         )}
       </DialogContent>

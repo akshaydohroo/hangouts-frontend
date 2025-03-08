@@ -108,6 +108,8 @@ export default function FollowingUserStoryDialog({
           storyLoading={storyLoading}
           setStoryLoading={setStoryLoading}
           setCreateStory={undefined}
+          storyHold={undefined}
+          setStoryHold={undefined}
         />
       </DialogContent>
     </Dialog>

@@ -27,8 +27,8 @@ export default function UserStories() {
   const followingUserWithStoriesQuery = useInfiniteQuery({
     queryKey: followingUsersWithStoriesQueryKey,
     queryFn: ({ queryKey, pageParam = 1 }) => {
-      if (isAuthenticated) return getFollowingUserWithStories(pageParam, 30)
-      else return getPublicUserWithStories(pageParam, 30)
+      if (isAuthenticated) return getFollowingUserWithStories(pageParam, 50)
+      else return getPublicUserWithStories(pageParam, 50)
     },
     staleTime: convertTime(5, 'min', 'ms'),
     keepPreviousData: true,

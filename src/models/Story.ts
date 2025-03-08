@@ -12,7 +12,7 @@ export type StoryAttributes = {
 }
 export interface followingUserWithStories
   extends Pick<User, 'id' | 'userName' | 'picture' | 'name'> {
-  stories: Pick<Story, 'storyId' | 'picture' | 'createdAt'>[]
+  stories: Story[]
 }
 
 export type followingUserWithStoriesQuery = {
@@ -20,6 +20,22 @@ export type followingUserWithStoriesQuery = {
   totalPages: number
   rows: followingUserWithStories[]
 }
+
+export interface UserWithStoryInteraction
+  extends Pick<User, 'id' | 'userName' | 'picture' | 'name'> {
+  storyInteraction: StoryInteraction
+}
+
+export class StoryInteraction {
+  public interactionId: string = ''
+  public storyId: string = ''
+  public viewerId: string = ''
+  public isLike: boolean = false
+  public reactionEmoji: string = ''
+  public createdAt: string = ''
+  public updatedAt: string = ''
+}
+
 export class Story {
   public storyId: string = ''
   public userId: string = ''
@@ -28,6 +44,7 @@ export class Story {
   public seenCount: number = 0
   public createdAt: string = ''
   public updatedAt: string = ''
+  public viewers: UserWithStoryInteraction[] = []
   constructor(params: StoryAttributes) {
     Object.assign(this, params)
   }
