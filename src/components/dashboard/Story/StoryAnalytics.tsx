@@ -85,9 +85,11 @@ export default function StoryAnalytics({
                   />
                   <Typography variant="caption" sx={styles.icon}>
                     {dialogOpen === 'likes' ? (
-                      <Favorite color="error" />
+                      <Favorite color="error" sx={{ fontSize: 24 }} />
                     ) : (
-                      (viewer.storyInteraction?.reactionEmoji ?? <Visibility />)
+                      (viewer.storyInteraction?.reactionEmoji ?? (
+                        <Visibility sx={{ fontSize: 24 }} />
+                      ))
                     )}
                   </Typography>
                 </Stack>
@@ -162,5 +164,6 @@ const styles = {
   icon: {
     display: 'flex',
     alignItems: 'center',
+    fontSize: 24,
   },
 }
