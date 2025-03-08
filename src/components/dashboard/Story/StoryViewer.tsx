@@ -1,8 +1,13 @@
 import { SkipNext, SkipPrevious } from '@mui/icons-material'
 import { IconButton, Skeleton, Stack } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
+import { getUserData } from '../../../functions/user'
 import useAppSelector from '../../../hooks/useAppSelector'
 import { Story } from '../../../models/Story'
+import { userDataQueryKey } from '../../../queryKeyStore'
+import { convertTime } from '../../../utils/functions'
 import ProgressIndexBar from '../../common/ProgressIndexBar'
+import StoryAnalytics from './StoryAnalytics'
 import StoryReact from './StoryReact'
 
 export default function StoryViewer({
@@ -13,8 +18,10 @@ export default function StoryViewer({
   storyLoading,
   setStoryLoading,
   setCreateStory,
+  storyHold,
+  setStoryHold,
 }: {
-  story: Story | undefined | Pick<Story, 'storyId' | 'picture' | 'createdAt'>
+  story: Story | undefined
   storyController: {
     inc: () => void
     dec: () => void
@@ -25,8 +32,17 @@ export default function StoryViewer({
   storyLoading: boolean
   setStoryLoading: (loading: boolean) => void
   setCreateStory: ((create: boolean) => void) | undefined
+  storyHold: boolean | undefined
+  setStoryHold: ((hold: boolean) => void) | undefined
 }) {
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
+
+  const userQuery = useQuery(userDataQueryKey, {
+    queryFn: () => getUserData(),
+    staleTime: convertTime(5, 'min', 'ms'),
+  })
+
+  const userData = userQuery.data
 
   const handleImageLoad = async () => {
     setStoryLoading(false)
@@ -35,6 +51,7 @@ export default function StoryViewer({
   const totalStories = storyController.getTotalPages()
 
   const handleStoryPrevious = () => {
+    if (storyHold) return
     setStoryLoading(true)
     if (storyIndex === 0) {
       userController?.dec()
@@ -44,6 +61,7 @@ export default function StoryViewer({
   }
 
   const handleStoryNext = () => {
+    if (storyHold) return
     setStoryLoading(true)
     if (storyIndex === totalStories - 1) {
       userController?.inc()
@@ -87,9 +105,16 @@ export default function StoryViewer({
           />
         </Stack>
       )}
-      {story && isAuthenticated && (
-        <StoryReact disabled={storyLoading} storyId={story.storyId} />
-      )}
+      {story &&
+        isAuthenticated &&
+        (story.userId !== userData?.id ? (
+          <StoryReact disabled={storyLoading} storyId={story.storyId} />
+        ) : (
+          <StoryAnalytics
+            storyAnalytics={story}
+            setStoryHold={setStoryHold as (hold: boolean) => void}
+          />
+        ))}
       <IconButton
         onClick={handleStoryNext}
         sx={styles.nextButton as any}

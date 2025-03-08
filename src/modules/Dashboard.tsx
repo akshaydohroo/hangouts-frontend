@@ -2,6 +2,7 @@ import { Box, Stack } from '@mui/material'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import UserPosts from '../components/dashboard/Post/UserPosts'
 import UserStories from '../components/dashboard/Story/UserStories'
 import Navbar from '../components/navbar/Navbar'
 import { getUserData } from '../functions/user'
@@ -59,7 +60,9 @@ export default function Dashboard() {
             <Stack direction="row">
               <Stack width="70%">
                 <UserStories />
-                <Stack>Posts</Stack>
+                <Stack>
+                  <UserPosts />
+                </Stack>
               </Stack>
               <Box width="30%">Chats</Box>
             </Stack>
