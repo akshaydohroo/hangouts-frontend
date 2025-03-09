@@ -76,14 +76,10 @@ const styles = {
   userPostWrapper: {
     borderRadius: 3,
     boxShadow: 3,
-<<<<<<< HEAD
     m: {
       xs: 2, // margin for extra-small screens
       sm: 3, // margin for small screens
       md: 5, // margin for medium screens
     },
-=======
-    m: 10,
->>>>>>> main
   },
 }

@@ -70,10 +70,6 @@ export default function UserPosts() {
   )
 }
 
-
 const styles = {
-    userPostsWrapper: {
-        
-    },   
+  userPostsWrapper: {},
 }
-  
