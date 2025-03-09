@@ -65,11 +65,7 @@ export default function Dashboard() {
             <Stack direction="row">
               <Stack width="70%" flexGrow={1}>
                 <UserStories />
-<<<<<<< HEAD
                 <Stack flexGrow={1}>
-=======
-                <Stack>
->>>>>>> main
                   <UserPosts />
                 </Stack>
               </Stack>
