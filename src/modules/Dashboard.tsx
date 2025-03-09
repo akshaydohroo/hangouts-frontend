@@ -1,4 +1,5 @@
-import { Box, Stack } from '@mui/material'
+import { Send } from '@mui/icons-material'
+import { Box, Fab, Stack, Theme, useMediaQuery } from '@mui/material'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
@@ -26,6 +27,10 @@ export default function Dashboard() {
     queryFn: () => getUserData(),
     staleTime: convertTime(5, 'min', 'ms'),
   })
+
+  const isMobileScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down('md')
+  )
 
   useEffect(() => {
     queryClient.resetQueries()
@@ -58,13 +63,19 @@ export default function Dashboard() {
           path="*"
           element={
             <Stack direction="row">
-              <Stack width="70%">
+              <Stack width="70%" flexGrow={1}>
                 <UserStories />
-                <Stack>
+                <Stack flexGrow={1}>
                   <UserPosts />
                 </Stack>
               </Stack>
-              <Box width="30%">Chats</Box>
+              {isMobileScreen ? (
+                <Fab color="success" aria-label="chat" sx={styles.chatButton}>
+                  <Send />
+                </Fab>
+              ) : (
+                <Box width="30%">Chats</Box>
+              )}
             </Stack>
           }
         />
@@ -77,5 +88,9 @@ const styles = {
     minHeight: '100%',
     height: 'wrap-content',
     width: '100vw',
+  },
+  chatButton: {
+    position: 'absolute',
+    right: 0,
   },
 }
