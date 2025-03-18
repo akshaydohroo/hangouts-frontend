@@ -48,3 +48,5 @@ export const emailAvailableQueryKey = (email: string) => [
   'available',
   { email },
 ]
+
+export const postsWithUserQueryKey = ['posts', 'following', 'users']

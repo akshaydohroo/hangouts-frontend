@@ -1,71 +1,102 @@
-import { Stack } from '@mui/material'
-import { UserAttributes } from '../../../models/User'
+import { Box, Skeleton, Stack } from '@mui/material'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useCallback, useEffect, useRef } from 'react'
+import { getPublicPosts } from '../../../functions/post'
+import useAppSelector from '../../../hooks/useAppSelector'
+import { postsWithUserQueryKey } from '../../../queryKeyStore'
+import { convertTime } from '../../../utils/functions'
 import UserPost from './UserPost'
 
-type User = {
-  id: string | number
-  name: string
-}
-
 export default function UserPosts() {
+  const isAuthenticated = useAppSelector(state => state.authenticated.value)
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isError,
+    isLoading,
+    error,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: postsWithUserQueryKey,
+    queryFn: ({ pageParam = 1 }) => {
+      if (isAuthenticated) return getPublicPosts(pageParam, 10)
+      else return getPublicPosts(pageParam, 10)
+    },
+    staleTime: convertTime(5, 'min', 'ms'),
+    keepPreviousData: true,
+    getNextPageParam: (lastPage, pages) => {
+      if (pages.length < lastPage.totalPages) {
+        return pages.length + 1
+      }
+      return undefined
+    },
+  })
+
+  useEffect(() => {
+    refetch()
+  }, [isAuthenticated])
+
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const lastPostRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (isFetchingNextPage) return
+      if (observerRef.current) observerRef.current.disconnect()
+
+      observerRef.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage()
+        }
+      })
+
+      if (node) observerRef.current.observe(node)
+    },
+    [isFetchingNextPage, hasNextPage, fetchNextPage]
+  )
+
+  if (isError) {
+    return <></>
+  }
+  if (isLoading) {
+    return (
+      <Stack>
+        <Skeleton variant="rectangular" height="33vh" />
+        <Skeleton variant="rectangular" height="33vh" />
+        <Skeleton variant="rectangular" height="33vh" />
+      </Stack>
+    )
+  }
+
+  const userPosts = data?.pages.flatMap(page => page.rows) || []
+
   return (
     <Stack>
-      <UserPost
-        user={
-          {
-            id: '1',
-            name: 'John Doe',
-            email: '',
-            picture: '',
-            userName: '',
-          } as UserAttributes
+      {userPosts.map((userPost, index) => {
+        if (index === userPosts.length - 1) {
+          return (
+            <Box ref={lastPostRef} key={userPost.postId}>
+              <UserPost
+                user={userPost.user}
+                postImage={userPost.picture}
+                caption={userPost.caption}
+                timestamp={userPost.createdAt}
+              />
+            </Box>
+          )
+        } else {
+          return (
+            <UserPost
+              key={userPost.postId}
+              user={userPost.user}
+              postImage={userPost.picture}
+              caption={userPost.caption}
+              timestamp={userPost.createdAt}
+            />
+          )
         }
-        postImage="image1.jpg"
-        caption="Caption 1"
-        timestamp={Date.now()}
-      />
-      <UserPost
-        user={
-          {
-            id: '1',
-            name: 'John Doe',
-            email: '',
-            picture: '',
-            userName: '',
-          } as UserAttributes
-        }
-        postImage="image2.jpg"
-        caption="Caption 2"
-        timestamp={Date.now()}
-      />
-      <UserPost
-        user={
-          {
-            id: '1',
-            name: 'John Doe',
-            email: '',
-            picture: '',
-            userName: '',
-          } as UserAttributes
-        }
-        postImage="image3.jpg"
-        caption="Caption 3"
-        timestamp={Date.now()}
-      />
-      <UserPost
-        user={
-          {
-            id: '1',
-            name: 'John Doe',
-            email: '',
-            picture: '',
-            userName: '',
-          } as UserAttributes
-        }
-        postImage="image4.jpg"
-        caption="Caption 4"
-        timestamp={Date.now()}
-      />
+      })}
     </Stack>
   )
 }

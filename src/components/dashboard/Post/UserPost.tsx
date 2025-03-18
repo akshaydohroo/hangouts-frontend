@@ -6,11 +6,13 @@ import {
 } from '@mui/icons-material'
 import {
   Avatar,
+  Box,
   Card,
   CardActions,
   CardHeader,
   CardMedia,
   IconButton,
+  Skeleton,
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
@@ -20,7 +22,7 @@ interface UserPostProps {
   user: UserAttributes
   postImage: string
   caption: string
-  timestamp: number
+  timestamp: string
 }
 
 export default function UserPost({
@@ -30,23 +32,43 @@ export default function UserPost({
   timestamp,
 }: UserPostProps) {
   const [liked, setLiked] = useState<boolean>(false)
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false)
 
   return (
     <Card sx={styles.userPostWrapper}>
-      {/* User Info */}
       <CardHeader
         avatar={<Avatar src={user.picture as string} alt={user.name} />}
         title={user.name}
         subheader={new Date(timestamp).toLocaleString()}
       />
 
-      {/* Post Image */}
-      <CardMedia
-        component="img"
-        height="400"
-        image={postImage}
-        alt="Post image"
-      />
+      <Box
+        sx={{
+          width: '100%',
+          height: 400, // Adjust this height as needed
+          backgroundColor: 'black', // Fills extra space with black
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden', // Ensures no extra spacing
+        }}
+      >
+        {!imageLoaded && (
+          <Skeleton variant="rectangular" width="100%" height="100%" />
+        )}
+        <CardMedia
+          component="img"
+          image={postImage}
+          alt="Post image"
+          sx={{
+            width: '100%', // Full width
+            height: '100%', // Full height of container
+            objectFit: 'contain', // Ensures aspect ratio is maintained
+            display: imageLoaded ? 'block' : 'none',
+          }}
+          onLoad={() => setImageLoaded(true)}
+        />
+      </Box>
 
       {/* Actions */}
       <CardActions disableSpacing>

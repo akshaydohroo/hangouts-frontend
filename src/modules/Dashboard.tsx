@@ -2,6 +2,7 @@ import { Send } from '@mui/icons-material'
 import { Box, Fab, Stack, Theme, useMediaQuery } from '@mui/material'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import Draggable from 'react-draggable'
 import { Route, Routes } from 'react-router-dom'
 import UserPosts from '../components/dashboard/Post/UserPosts'
 import UserStories from '../components/dashboard/Story/UserStories'
@@ -70,9 +71,11 @@ export default function Dashboard() {
                 </Stack>
               </Stack>
               {isMobileScreen ? (
-                <Fab color="success" aria-label="chat" sx={styles.chatButton}>
-                  <Send />
-                </Fab>
+                <Draggable defaultPosition={{ x: 0, y: 0 }} bounds="parent">
+                  <Fab color="success" aria-label="chat" sx={styles.chatButton}>
+                    <Send />
+                  </Fab>
+                </Draggable>
               ) : (
                 <Box width="30%">Chats</Box>
               )}
@@ -90,7 +93,8 @@ const styles = {
     width: '100vw',
   },
   chatButton: {
-    position: 'absolute',
-    right: 0,
+    position: 'fixed',
+    right: 16,
+    bottom: 16,
   },
 }

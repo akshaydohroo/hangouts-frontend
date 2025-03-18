@@ -1,4 +1,11 @@
-import { Avatar, Box, ListItem, Stack, Typography } from '@mui/material'
+import {
+  Avatar,
+  Box,
+  ListItem,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -84,7 +91,21 @@ export default function UserStories() {
     return <></>
   }
   if (followingUserWithStoriesQuery.isLoading && userQuery.isLoading) {
-    return <></>
+    return (
+      <Box sx={styles.wrapper}>
+        <Stack direction="row" sx={styles.carousel} ref={carouselRef}>
+          {Array.from({ length: 10 }).map((_, idx) => (
+            <Skeleton
+              variant="circular"
+              width={65}
+              height={65}
+              sx={{ ml: 3.5, mr: 2.5 }}
+              key={idx}
+            />
+          ))}
+        </Stack>
+      </Box>
+    )
   }
 
   return (
