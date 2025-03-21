@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Story, UserWithStoryInteraction } from '../../../models/Story'
+import { abbreviateNumber } from '../../../utils/functions'
 
 export default function StoryAnalytics({
   storyAnalytics,
@@ -34,7 +35,7 @@ export default function StoryAnalytics({
     <Stack direction={'row'} sx={styles.container}>
       <Stack direction="row" sx={styles.metric}>
         <Badge
-          badgeContent={storyAnalytics.likes}
+          badgeContent={abbreviateNumber(storyAnalytics.likes)}
           color="primary"
           overlap="circular"
         >
@@ -46,7 +47,7 @@ export default function StoryAnalytics({
 
       <Stack direction="row" sx={styles.metric}>
         <Badge
-          badgeContent={storyAnalytics.seenCount}
+          badgeContent={abbreviateNumber(storyAnalytics.seenCount)}
           color="primary"
           overlap="circular"
         >
