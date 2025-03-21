@@ -213,3 +213,13 @@ export function uploadFileInChunks(
   // Start uploading the first chunk
   return uploadNextChunk()
 }
+export const abbreviateNumber = (num: number): string => {
+  if (Math.abs(num) < 1000) return num.toString() // No abbreviation needed
+
+  const suffixes = ['', 'K', 'M', 'B', 'T']
+  let magnitude = Math.floor(Math.log10(Math.abs(num)) / 3)
+  magnitude = Math.min(magnitude, suffixes.length - 1) // Ensure it doesn't exceed available suffixes
+
+  const abbreviated = num / Math.pow(1000, magnitude)
+  return `${abbreviated.toFixed(abbreviated % 1 === 0 ? 0 : 1)}${suffixes[magnitude]}`
+}

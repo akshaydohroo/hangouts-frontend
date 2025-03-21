@@ -50,3 +50,14 @@ export const emailAvailableQueryKey = (email: string) => [
 ]
 
 export const postsWithUserQueryKey = ['posts', 'following', 'users']
+
+export const commentPostQueryKey = (
+  postId: string,
+  parentCommentId: string | null
+) => ['comment', 'post', { postId, parentCommentId }]
+
+export const commentsPostCountQueryKey = (postId: string) => [
+  'comment',
+  'post',
+  { postId },
+]

@@ -1,5 +1,5 @@
 import {
-  ChatBubbleOutline,
+  ChatBubbleOutlineRounded,
   Favorite,
   FavoriteBorder,
   Send,
@@ -13,32 +13,41 @@ import {
   CardMedia,
   IconButton,
   Skeleton,
+  Stack,
   Typography,
 } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { UserAttributes } from '../../../models/User'
+import { getPublicPostCommentsCount } from '../../../functions/comment'
+import { PostWithUser } from '../../../models/Post'
+import { commentsPostCountQueryKey } from '../../../queryKeyStore'
+import { abbreviateNumber, convertTime } from '../../../utils/functions'
+import CommentsDialog from './CommentsDialog'
 
-interface UserPostProps {
-  user: UserAttributes
-  postImage: string
-  caption: string
-  timestamp: string
-}
-
-export default function UserPost({
-  user,
-  postImage,
-  caption,
-  timestamp,
-}: UserPostProps) {
+export default function UserPost({ post }: { post: PostWithUser }) {
+  const {
+    postId,
+    caption,
+    likes,
+    picture: postImage,
+    user: author,
+    createdAt: timestamp,
+  } = post
   const [liked, setLiked] = useState<boolean>(false)
   const [imageLoaded, setImageLoaded] = useState<boolean>(false)
+  const [commentDialogOpen, setCommentDialogOpen] = useState<boolean>(false)
 
+  const commentsCountQuery = useQuery(commentsPostCountQueryKey(postId), {
+    queryFn: () => getPublicPostCommentsCount(postId),
+    staleTime: convertTime(5, 'min', 'ms'),
+  })
+
+  console.log(commentsCountQuery.data)
   return (
     <Card sx={styles.userPostWrapper}>
       <CardHeader
-        avatar={<Avatar src={user.picture as string} alt={user.name} />}
-        title={user.name}
+        avatar={<Avatar src={author.picture as string} alt={author.name} />}
+        title={author.name}
         subheader={new Date(timestamp).toLocaleString()}
       />
 
@@ -72,23 +81,40 @@ export default function UserPost({
 
       {/* Actions */}
       <CardActions disableSpacing>
-        <IconButton
-          onClick={() => setLiked(!liked)}
-          color={liked ? 'error' : 'default'}
-        >
-          {liked ? <Favorite /> : <FavoriteBorder />}
-        </IconButton>
-        <IconButton>
-          <ChatBubbleOutline />
-        </IconButton>
-        <IconButton>
-          <Send />
-        </IconButton>
-      </CardActions>
+        <Stack direction="row" alignItems={'center'} sx={{ ml: 0.5 }}>
+          <Stack direction="row" alignItems={'center'} sx={{ mb: 0.5 }}>
+            <IconButton
+              onClick={() => setLiked(!liked)}
+              color={liked ? 'error' : 'default'}
+            >
+              {liked ? <Favorite /> : <FavoriteBorder />}
+            </IconButton>
+            <Typography variant="button">{abbreviateNumber(likes)}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems={'center'}>
+            <IconButton onClick={() => setCommentDialogOpen(true)}>
+              <ChatBubbleOutlineRounded
+                color={commentDialogOpen ? 'success' : 'inherit'}
+              />
+            </IconButton>
 
+            <Typography variant="button">
+              {abbreviateNumber(commentsCountQuery.data?.count || 0)}
+            </Typography>
+          </Stack>
+          <IconButton>
+            <Send />
+          </IconButton>
+        </Stack>
+      </CardActions>
+      <CommentsDialog
+        open={commentDialogOpen}
+        onClose={() => setCommentDialogOpen(false)}
+        postId={postId}
+      />
       {/* Caption */}
-      <Typography variant="body2" sx={{ padding: '0 16px 16px' }}>
-        <strong>{user.name}</strong> {caption}
+      <Typography variant="body2" sx={{ padding: '0 16px 16px', ml: 0.5 }}>
+        <strong>{author.name}</strong> {caption}
       </Typography>
     </Card>
   )

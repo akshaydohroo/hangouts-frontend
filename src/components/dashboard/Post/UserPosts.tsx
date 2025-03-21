@@ -77,24 +77,11 @@ export default function UserPosts() {
         if (index === userPosts.length - 1) {
           return (
             <Box ref={lastPostRef} key={userPost.postId}>
-              <UserPost
-                user={userPost.user}
-                postImage={userPost.picture}
-                caption={userPost.caption}
-                timestamp={userPost.createdAt}
-              />
+              <UserPost key={userPost.postId} post={userPost} />
             </Box>
           )
         } else {
-          return (
-            <UserPost
-              key={userPost.postId}
-              user={userPost.user}
-              postImage={userPost.picture}
-              caption={userPost.caption}
-              timestamp={userPost.createdAt}
-            />
-          )
+          return <UserPost key={userPost.postId} post={userPost} />
         }
       })}
     </Stack>
