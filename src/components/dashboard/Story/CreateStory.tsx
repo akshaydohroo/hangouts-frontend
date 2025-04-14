@@ -83,7 +83,10 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '75vh',
+    height: {
+      xs: '50vh',
+      md: '75vh',
+    },
     backgroundColor: 'rgba(0,0,0,0.1)',
   },
   createStoryButton: {

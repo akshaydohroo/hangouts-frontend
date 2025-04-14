@@ -69,6 +69,6 @@ const styles = {
     p: 1,
   },
   uploadImageIcon: {
-    fontSize: '50px',
+    fontSize: '100px',
   },
 }

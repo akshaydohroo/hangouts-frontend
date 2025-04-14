@@ -1,5 +1,6 @@
 import { SkipNext, SkipPrevious } from '@mui/icons-material'
-import { IconButton, Skeleton, Stack } from '@mui/material'
+import { IconButton, Skeleton, Stack, useMediaQuery } from '@mui/material'
+import { Theme } from '@mui/material/styles'
 import { useQuery } from '@tanstack/react-query'
 import { getUserData } from '../../../functions/user'
 import useAppSelector from '../../../hooks/useAppSelector'
@@ -9,7 +10,6 @@ import { convertTime } from '../../../utils/functions'
 import ProgressIndexBar from '../../common/ProgressIndexBar'
 import StoryAnalytics from './StoryAnalytics'
 import StoryReact from './StoryReact'
-
 export default function StoryViewer({
   story,
   storyController,
@@ -70,8 +70,11 @@ export default function StoryViewer({
       storyController.inc()
     }
   }
+  const isMobileScreen = useMediaQuery((theme: Theme) =>
+    theme.breakpoints.down('md')
+  )
   return (
-    <Stack sx={styles.viewerBox} direction="column">
+    <Stack sx={styles.viewerBox}>
       <IconButton
         onClick={handleStoryPrevious}
         sx={styles.previousButton}
@@ -86,7 +89,7 @@ export default function StoryViewer({
       {story === undefined ? (
         <Skeleton variant="rectangular" sx={styles.skeleton} />
       ) : (
-        <Stack direction="column">
+        <Stack direction="column" alignItems="center" justifyItems="center">
           <Skeleton
             variant="rectangular"
             sx={{
@@ -97,10 +100,12 @@ export default function StoryViewer({
           <img
             src={story?.picture}
             alt="story"
-            style={{
-              ...styles.storyPicture,
-              display: storyLoading ? 'none' : 'block',
-            }}
+            style={
+              {
+                ...styles.storyPicture(isMobileScreen ? '50vh' : '75vh'),
+                display: storyLoading ? 'none' : 'block',
+              } as React.CSSProperties
+            }
             onLoad={handleImageLoad}
           />
         </Stack>
@@ -127,9 +132,11 @@ export default function StoryViewer({
 }
 
 const styles = {
-  storyPicture: {
-    height: '75vh',
-  },
+  storyPicture: (height: string) => ({
+    height: height,
+    width: '90%',
+    objectFit: 'contain',
+  }),
   skeleton: {
     height: '75vh',
     width: '100%',

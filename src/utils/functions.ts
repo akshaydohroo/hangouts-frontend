@@ -165,7 +165,8 @@ export function extractErrorDetailFromErrorQuery(error: any) {
 export function uploadFileInChunks(
   file: File,
   chunkSize = 2 * 1024 * 1024,
-  endPoint: string
+  endPoint: string,
+  additionalData?: Record<string, any>
 ): Promise<void> {
   const totalChunks = Math.ceil(file.size / chunkSize)
 
@@ -176,23 +177,27 @@ export function uploadFileInChunks(
     const end = Math.min(start + chunkSize, file.size)
     const chunk = file.slice(start, end) // Get the current chunk of the file
 
+    // Create the payload with optional additional data
+    const formData = new FormData()
+    formData.append('chunk', chunk)
+    formData.append('currentChunk', String(currentChunk + 1))
+    formData.append('totalChunks', String(totalChunks))
+    formData.append('filename', file.name)
+
+    // Append additional data if provided
+    if (additionalData) {
+      Object.entries(additionalData).forEach(([key, value]) => {
+        formData.append(key, String(value))
+      })
+    }
+
     // Send the chunk to the backend using fetch
     return new Promise<void>((resolve, reject) => {
       backend
-        .postForm(
-          endPoint,
-          {
-            chunk: chunk,
-            currentChunk: currentChunk + 1,
-            totalChunks: totalChunks,
-            filename: file.name,
-          },
-          {
-            withCredentials: true,
-          }
-        )
+        .postForm(endPoint, formData, {
+          withCredentials: true,
+        })
         .then(res => {
-          // If there are more chunks to upload, continue with the next chunk
           currentChunk++
           if (currentChunk < totalChunks) {
             uploadNextChunk()
@@ -222,4 +227,18 @@ export const abbreviateNumber = (num: number): string => {
 
   const abbreviated = num / Math.pow(1000, magnitude)
   return `${abbreviated.toFixed(abbreviated % 1 === 0 ? 0 : 1)}${suffixes[magnitude]}`
+}
+
+export const base64ToFile = (base64String: string, filename: string): File => {
+  const arr = base64String.split(',')
+  const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png' // Extract MIME type
+  const bstr = atob(arr[1]) // Decode Base64 string
+  let n = bstr.length
+  const u8arr = new Uint8Array(n)
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n)
+  }
+
+  return new File([u8arr], filename, { type: mime })
 }
