@@ -89,6 +89,11 @@ const styles = {
   appBar: (mode: boolean) => ({
     backgroundColor: mode ? '#000814' : '#003049',
     color: 'white',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+    backdropFilter: 'blur(10px)', // Glass effect
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Shadow effect
   }),
   toolbar: {
     pl: {

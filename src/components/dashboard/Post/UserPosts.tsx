@@ -5,6 +5,7 @@ import { getPublicPosts } from '../../../functions/post'
 import useAppSelector from '../../../hooks/useAppSelector'
 import { postsWithUserQueryKey } from '../../../queryKeyStore'
 import { convertTime } from '../../../utils/functions'
+import AddPost from './AddPost'
 import UserPost from './UserPost'
 
 export default function UserPosts() {
@@ -73,17 +74,20 @@ export default function UserPosts() {
 
   return (
     <Stack>
-      {userPosts.map((userPost, index) => {
-        if (index === userPosts.length - 1) {
-          return (
-            <Box ref={lastPostRef} key={userPost.postId}>
-              <UserPost key={userPost.postId} post={userPost} />
-            </Box>
-          )
-        } else {
-          return <UserPost key={userPost.postId} post={userPost} />
-        }
-      })}
+      <AddPost />
+      <Stack>
+        {userPosts.map((userPost, index) => {
+          if (index === userPosts.length - 1) {
+            return (
+              <Box ref={lastPostRef} key={userPost.postId}>
+                <UserPost key={userPost.postId} post={userPost} />
+              </Box>
+            )
+          } else {
+            return <UserPost key={userPost.postId} post={userPost} />
+          }
+        })}
+      </Stack>
     </Stack>
   )
 }

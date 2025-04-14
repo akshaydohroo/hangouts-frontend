@@ -1,5 +1,6 @@
 import { backend } from '../api'
 import { CountPostsWithUser } from '../models/Post'
+import { uploadFileInChunks } from '../utils/functions'
 
 export async function getPublicPosts(
   page: number,
@@ -13,6 +14,16 @@ export async function getPublicPosts(
       },
     })
     return res.data as CountPostsWithUser
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function createPost(picture: File, caption: string) {
+  try {
+    await uploadFileInChunks(picture, 2 * 1024 * 1024, '/post/user/create', {
+      caption,
+    })
   } catch (error) {
     throw error
   }

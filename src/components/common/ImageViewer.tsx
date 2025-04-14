@@ -1,5 +1,5 @@
 import { Box, Skeleton } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import 'react-resizable/css/styles.css'
 
 export default function ImageViewer({
@@ -14,33 +14,55 @@ export default function ImageViewer({
   useEffect(() => {
     const reader = new FileReader()
     reader.onloadend = () => {
-      setImageSrc(reader.result as string) // Set the data URL to state
+      setImageSrc(reader.result as string)
     }
-    reader.readAsDataURL(imageFile) // Convert the file to a data URL
+    reader.readAsDataURL(imageFile)
   }, [imageFile])
 
-  useEffect(() => {
-    if (imageSrc) {
-      const canvas = canvasRef.current
-      const ctx = canvas?.getContext('2d')
-      const image = new Image()
-      image.src = imageSrc
-      image.onload = () => {
-        if (canvas && ctx) {
-          canvas.width = image.width
-          canvas.height = image.height
-          ctx.drawImage(image, 0, 0)
-        }
+  useLayoutEffect(() => {
+    if (!imageSrc) return
+
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    const image = new Image()
+    image.src = imageSrc
+
+    image.onload = () => {
+      const container = canvas.parentElement
+      if (!container || !ctx) return
+
+      const containerWidth = container.clientWidth
+      const containerHeight = container.clientHeight
+
+      const imgAspectRatio = image.width / image.height
+      const containerAspectRatio = containerWidth / containerHeight
+
+      let drawWidth, drawHeight
+
+      if (imgAspectRatio > containerAspectRatio) {
+        // Image is wider relative to container
+        drawWidth = containerWidth
+        drawHeight = containerWidth / imgAspectRatio
+      } else {
+        // Image is taller relative to container
+        drawHeight = containerHeight
+        drawWidth = containerHeight * imgAspectRatio
       }
+
+      canvas.width = drawWidth
+      canvas.height = drawHeight
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.drawImage(image, 0, 0, drawWidth, drawHeight)
     }
-  }, [imageSrc])
+  }, [imageSrc, canvasRef])
 
   return (
     <Box sx={styles.wrapper}>
       {imageSrc ? (
-        <canvas ref={canvasRef} style={styles.canvas}>
-          <img src={imageSrc} style={styles.image as React.CSSProperties} />
-        </canvas>
+        <canvas ref={canvasRef} style={styles.canvas} />
       ) : (
         <Skeleton height="90%" width="90%" />
       )}
@@ -52,23 +74,14 @@ const styles = {
   wrapper: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'start',
+    alignItems: 'center',
     width: '100%',
     height: '100%',
     backgroundColor: 'rgba(0,0,0,0.1)',
-  },
-  imgWrapper: {
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  image: {
-    objectFit: 'contain',
-    height: '100%',
-    width: '100%',
+    maxWidth: '100%',
   },
   canvas: {
-    height: '100%',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
 }
