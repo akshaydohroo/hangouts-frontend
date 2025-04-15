@@ -58,3 +58,14 @@ export const invalidateUserStories = (queryKey: QueryKey): boolean => {
 
   return true
 }
+
+export const invalidateUserPosts = (queryKey: QueryKey): boolean => {
+  if (queryKey.length < 4) return false
+  if (
+    JSON.stringify(queryKey.slice(0, 4)) !==
+    JSON.stringify(['posts', 'following', 'users', true])
+  )
+    return false
+
+  return true
+}

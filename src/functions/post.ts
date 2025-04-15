@@ -19,6 +19,24 @@ export async function getPublicPosts(
   }
 }
 
+export async function getPosts(
+  page: number,
+  limit: number = 10
+): Promise<CountPostsWithUser> {
+  try {
+    const res = await backend.get('/post/users', {
+      params: {
+        page,
+        limit,
+      },
+      withCredentials: true,
+    })
+    return res.data as CountPostsWithUser
+  } catch (error) {
+    throw error
+  }
+}
+
 export async function createPost(picture: File, caption: string) {
   try {
     await uploadFileInChunks(picture, 2 * 1024 * 1024, '/post/user/create', {

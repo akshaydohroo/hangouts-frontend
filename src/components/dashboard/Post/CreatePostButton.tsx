@@ -1,7 +1,7 @@
 import { AddSharp } from '@mui/icons-material'
 import { Fab, Theme, useTheme } from '@mui/material'
 
-export default function AddPostButton({
+export default function CreatePostButton({
   setAddPostDialogOpen,
 }: {
   setAddPostDialogOpen: () => void

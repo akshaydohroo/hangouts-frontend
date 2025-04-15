@@ -1,18 +1,17 @@
 import { useState } from 'react'
-import AddPostButton from './AddPostButton'
-import AddPostDialog from './AddPostDialog'
+import CreatePostButton from './CreatePostButton'
+import CreatePostDialog from './CreatePostDialog'
 
 export default function AddPost() {
   const [addPostDialogOpen, setAddPostDialogOpen] = useState(false)
   return (
     <>
-      <AddPostButton
+      <CreatePostButton
         setAddPostDialogOpen={() => {
-          console.log('AddPostButton clicked')
           setAddPostDialogOpen(true)
         }}
       />
-      <AddPostDialog
+      <CreatePostDialog
         addPostDialogOpen={addPostDialogOpen}
         setAddPostDialogClose={() => setAddPostDialogOpen(false)}
       />
