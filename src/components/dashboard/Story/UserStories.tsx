@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
   getFollowingUserWithStories,
   getPublicUserWithStories,
@@ -32,13 +32,14 @@ export default function UserStories() {
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
 
   const followingUserWithStoriesQuery = useInfiniteQuery({
-    queryKey: followingUsersWithStoriesQueryKey,
+    queryKey: followingUsersWithStoriesQueryKey(isAuthenticated),
     queryFn: ({ queryKey, pageParam = 1 }) => {
-      if (isAuthenticated) return getFollowingUserWithStories(pageParam, 50)
-      else return getPublicUserWithStories(pageParam, 50)
+      return isAuthenticated
+        ? getFollowingUserWithStories(pageParam, 50)
+        : getPublicUserWithStories(pageParam, 50)
     },
     staleTime: convertTime(5, 'min', 'ms'),
-    keepPreviousData: true,
+    keepPreviousData: false,
     getNextPageParam: (lastPage, pages) => {
       if (pages.length < lastPage.totalPages) {
         return pages.length + 1
@@ -46,9 +47,6 @@ export default function UserStories() {
       return undefined
     },
   })
-  useEffect(() => {
-    followingUserWithStoriesQuery.refetch()
-  }, [isAuthenticated, followingUserWithStoriesQuery.data])
 
   const userQuery = useQuery(userDataQueryKey, {
     queryFn: () => getUserData(),

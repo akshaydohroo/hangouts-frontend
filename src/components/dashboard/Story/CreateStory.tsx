@@ -47,6 +47,15 @@ export default function CreateStory() {
             })
           )
         }
+      } else {
+        console.error('Story Blob is null')
+        dispatch(
+          setSnackbar({
+            message: 'Story creation failed',
+            severity: 'error',
+            alertVarient: 'filled',
+          })
+        )
       }
     })
   }

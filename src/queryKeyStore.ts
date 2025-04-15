@@ -18,7 +18,12 @@ export const userTypeDataQueryKey = (type: string, page: number) => [
     page,
   },
 ]
-export const followingUsersWithStoriesQueryKey = ['story', 'following', 'users']
+export const followingUsersWithStoriesQueryKey = (isAuthenticated: boolean) => [
+  'story',
+  'following',
+  'users',
+  isAuthenticated,
+]
 export const followUserStoriesQueryKey = (followingId: string) => [
   'story',
   'following',
@@ -49,7 +54,12 @@ export const emailAvailableQueryKey = (email: string) => [
   { email },
 ]
 
-export const postsWithUserQueryKey = ['posts', 'following', 'users']
+export const postsWithUserQueryKey = (isAuthenticated: boolean) => [
+  'posts',
+  'following',
+  'users',
+  isAuthenticated,
+]
 
 export const commentPostQueryKey = (
   postId: string,

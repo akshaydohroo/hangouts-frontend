@@ -1,11 +1,11 @@
 import { Box, Skeleton, Stack } from '@mui/material'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { useCallback, useEffect, useRef } from 'react'
-import { getPublicPosts } from '../../../functions/post'
+import { useCallback, useRef } from 'react'
+import { getPosts, getPublicPosts } from '../../../functions/post'
 import useAppSelector from '../../../hooks/useAppSelector'
 import { postsWithUserQueryKey } from '../../../queryKeyStore'
 import { convertTime } from '../../../utils/functions'
-import AddPost from './AddPost'
+import CreatePost from './CreatePost'
 import UserPost from './UserPost'
 
 export default function UserPosts() {
@@ -18,16 +18,15 @@ export default function UserPosts() {
     isFetchingNextPage,
     isError,
     isLoading,
-    error,
-    refetch,
   } = useInfiniteQuery({
-    queryKey: postsWithUserQueryKey,
+    queryKey: postsWithUserQueryKey(isAuthenticated),
     queryFn: ({ pageParam = 1 }) => {
-      if (isAuthenticated) return getPublicPosts(pageParam, 10)
-      else return getPublicPosts(pageParam, 10)
+      return isAuthenticated
+        ? getPosts(pageParam, 10)
+        : getPublicPosts(pageParam, 10)
     },
     staleTime: convertTime(5, 'min', 'ms'),
-    keepPreviousData: true,
+    keepPreviousData: false,
     getNextPageParam: (lastPage, pages) => {
       if (pages.length < lastPage.totalPages) {
         return pages.length + 1
@@ -35,11 +34,6 @@ export default function UserPosts() {
       return undefined
     },
   })
-
-  useEffect(() => {
-    refetch()
-  }, [isAuthenticated])
-
   const observerRef = useRef<IntersectionObserver | null>(null)
   const lastPostRef = useCallback(
     (node: HTMLDivElement) => {
@@ -74,7 +68,7 @@ export default function UserPosts() {
 
   return (
     <Stack>
-      <AddPost />
+      <CreatePost />
       <Stack>
         {userPosts.map((userPost, index) => {
           if (index === userPosts.length - 1) {

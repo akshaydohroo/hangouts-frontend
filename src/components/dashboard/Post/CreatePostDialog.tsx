@@ -8,23 +8,27 @@ import {
   DialogTitle,
   IconButton,
   TextField,
-  useTheme,
 } from '@mui/material'
-import { createRef, useEffect, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useRef, useState } from 'react'
+import { createPost } from '../../../functions/post'
+import useAppDispatch from '../../../hooks/useAppDispatch'
+import { invalidateUserPosts } from '../../../invalidateQueries'
+import { setSnackbar } from '../../../redux/snackbar'
 import ImageUpload from '../../common/ImageUpload'
 import ImageViewer from '../../common/ImageViewer'
 
-export default function AddPostDialog({
+export default function CreatePostDialog({
   addPostDialogOpen,
   setAddPostDialogClose,
 }: {
   addPostDialogOpen: boolean
   setAddPostDialogClose: () => void
 }) {
-  const theme = useTheme()
+  const dispatch = useAppDispatch()
   const [postText, setPostText] = useState('')
   const [postImage, setPostImage] = useState<File | null>(null)
-  const storyCanvasRef = createRef<HTMLCanvasElement>()
+  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (!addPostDialogOpen) {
@@ -33,38 +37,55 @@ export default function AddPostDialog({
     }
   }, [addPostDialogOpen])
 
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const postCanvasRef = useRef<HTMLCanvasElement>(null)
 
-  // function submitPost() {
+  const submitPost = () => {
+    postCanvasRef.current?.toBlob(async blob => {
+      if (blob) {
+        try {
+          if (postText === '') {
+            throw Error('Post text is required')
+          }
 
-  //     const imageFile = base64ToFile(image as string , "image/post")
-
-  //           await createPost(imageFile,postText)
-  //           queryClient.invalidateQueries({
-  //             predicate: ({ queryKey }) => {
-  //               return invalidateUserStories(queryKey)
-  //             },
-  //           })
-  //           setStoryImage(null)
-  //           dispatch(
-  //             setSnackbar({
-  //               message: 'Story created successfully',
-  //               severity: 'success',
-  //               alertVarient: 'filled',
-  //             })
-  //           )
-  //         } catch (err: Error | any) {
-  //           dispatch(
-  //             setSnackbar({
-  //               message: `${err?.message ?? 'Story creation failed'}`,
-  //               severity: 'error',
-  //               alertVarient: 'filled',
-  //             })
-  //           )
-  //         }
-  //       }
-  //     })
-  //   }
+          const postImageFile = new File([blob], 'post.webp', {
+            type: 'image/webp',
+          })
+          await createPost(postImageFile, postText)
+          queryClient.invalidateQueries({
+            predicate: ({ queryKey }) => {
+              return invalidateUserPosts(queryKey)
+            },
+          })
+          setPostImage(null)
+          setPostText('')
+          dispatch(
+            setSnackbar({
+              message: 'Post created successfully',
+              severity: 'success',
+              alertVarient: 'filled',
+            })
+          )
+        } catch (err: Error | any) {
+          dispatch(
+            setSnackbar({
+              message: `${err?.message ?? 'Post creation failed'}`,
+              severity: 'error',
+              alertVarient: 'filled',
+            })
+          )
+        }
+      } else {
+        console.error('Post Blob is null')
+        dispatch(
+          setSnackbar({
+            message: 'Post creation failed',
+            severity: 'error',
+            alertVarient: 'filled',
+          })
+        )
+      }
+    })
+  }
 
   return (
     <Dialog
@@ -83,50 +104,15 @@ export default function AddPostDialog({
       <DialogContent sx={styles.content}>
         <Box sx={styles.imageUploadWrapper}>
           {postImage ? (
-            // <Box
-            //   sx={{
-            //     width: '100%',
-            //     height: 400, // Adjust this height as needed
-            //     backgroundColor: 'black', // Fills extra space with black
-            //     display: 'flex',
-            //     justifyContent: 'center',
-            //     alignItems: 'center',
-            //     overflow: 'hidden', // Ensures no extra spacing
-            //   }}
-            // >
-            //   <CardMedia
-            //     component="img"
-            //     image={image}
-            //     alt="Post image"
-            //     sx={{
-            //       width: '100%', // Full width
-            //       height: '100%', // Full height of container
-            //       objectFit: 'contain', // Ensures aspect ratio is maintained
-            //     }}
-            //   />
-            // </Box>
-            <ImageViewer imageFile={postImage} canvasRef={storyCanvasRef} />
+            <ImageViewer imageFile={postImage} canvasRef={postCanvasRef} />
           ) : (
             <ImageUpload setImage={setPostImage} />
-            // <Button
-            //   component="label"
-            //   variant="contained"
-            //   sx={styles.uploadButton}
-            // >
-            //   <AddPhotoAlternate sx={styles.uploadIcon} />
-            //   Upload Image
-            //   <input
-            //     type="file"
-            //     accept="image/*"
-            //     hidden
-            //     onChange={handleFileChange}
-            //   />
-            // </Button>
           )}
         </Box>
         <TextField
           fullWidth
           multiline
+          required={true}
           rows={2}
           placeholder="Write a caption..."
           variant="outlined"
@@ -139,7 +125,13 @@ export default function AddPostDialog({
         <Button onClick={setAddPostDialogClose} sx={styles.cancelButton}>
           Cancel
         </Button>
-        <Button variant="contained" color="primary" sx={styles.postButton}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={styles.postButton}
+          disabled={postImage == null || postText === ''}
+          onClick={submitPost}
+        >
           Post
         </Button>
       </DialogActions>
@@ -147,7 +139,6 @@ export default function AddPostDialog({
   )
 }
 
-// 🌟 Styles Object
 const styles = {
   dialog: {
     backdropFilter: 'blur(10px)',
