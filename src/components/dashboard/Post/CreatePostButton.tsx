@@ -1,5 +1,6 @@
 import { AddSharp } from '@mui/icons-material'
 import { Fab, Theme, useTheme } from '@mui/material'
+import useAppSelector from '../../../hooks/useAppSelector'
 
 export default function CreatePostButton({
   setAddPostDialogOpen,
@@ -7,7 +8,7 @@ export default function CreatePostButton({
   setAddPostDialogOpen: () => void
 }) {
   const theme = useTheme()
-
+  const isAuthenticated = useAppSelector(state => state.authenticated.value)
   return (
     <Fab
       color="primary"
@@ -15,6 +16,7 @@ export default function CreatePostButton({
       size="large"
       onClick={setAddPostDialogOpen}
       sx={styles.fab(theme)}
+      disabled={!isAuthenticated}
     >
       <AddSharp sx={styles.icon} />
     </Fab>

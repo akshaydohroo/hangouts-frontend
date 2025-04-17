@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import Draggable from 'react-draggable'
 import { Route, Routes } from 'react-router-dom'
+import AuthBanner from '../components/common/AuthBanner'
 import UserPosts from '../components/dashboard/Post/UserPosts'
 import UserStories from '../components/dashboard/Story/UserStories'
 import Navbar from '../components/navbar/Navbar'
@@ -71,13 +72,22 @@ export default function Dashboard() {
                 </Stack>
               </Stack>
               {isMobileScreen ? (
-                <Draggable defaultPosition={{ x: 0, y: 0 }} bounds="parent">
-                  <Fab color="success" aria-label="chat" sx={styles.chatButton}>
-                    <Send />
-                  </Fab>
-                </Draggable>
-              ) : (
+                <>
+                  <Draggable defaultPosition={{ x: 0, y: 0 }} bounds="parent">
+                    <Fab
+                      color="success"
+                      aria-label="chat"
+                      sx={styles.chatButton}
+                    >
+                      <Send />
+                    </Fab>
+                  </Draggable>
+                  <AuthBanner />
+                </>
+              ) : isAuthenticated ? (
                 <Box width="30%">Chats</Box>
+              ) : (
+                <AuthBanner />
               )}
             </Stack>
           }
