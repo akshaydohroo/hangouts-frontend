@@ -98,6 +98,7 @@ export default function CommentsDialog({
             variant="contained"
             color="success"
             size="medium"
+            disabled={!isAuthenticated}
             onClick={() => {
               if (parentReplyCommentId === null) {
                 setParentReplyCommentId(undefined)
