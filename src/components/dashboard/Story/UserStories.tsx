@@ -63,8 +63,6 @@ export default function UserStories() {
     enabled: isAuthenticated,
   })
 
-  console.log(isAuthenticated + 'isAuthenticated')
-
   const userStories = userStoriesQuery.data
 
   const followingUsers =

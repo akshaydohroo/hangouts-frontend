@@ -16,14 +16,40 @@ export async function getPublicPostComments(
     throw error
   }
 }
-export async function getPublicPostCommentsCount(
-  postId: string
-): Promise<{ count: number }> {
+
+export async function getPostComments(
+  postId: string,
+  parentCommentId: string | null
+): Promise<CommentWithAuthor[]> {
   try {
-    const res = await backend.get(`/guest/users/comments/count/${postId}`, {
+    const params = parentCommentId ? { parentCommentId } : {}
+    const res = await backend.get(`/post/comments/${postId}`, {
+      params,
       withCredentials: true,
     })
-    return res.data as { count: number }
+    return res.data as CommentWithAuthor[]
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function createComment(
+  postId: string,
+  parentCommentId: string | null,
+  content: string
+) {
+  try {
+    const res = await backend.post(
+      `/post/comments/${postId}`,
+      {
+        content,
+        parentCommentId,
+      },
+      {
+        withCredentials: true,
+      }
+    )
+    return res.data as CommentWithAuthor
   } catch (error) {
     throw error
   }

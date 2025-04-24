@@ -1,7 +1,6 @@
 import {
   ChatBubbleOutlineRounded,
-  Favorite,
-  FavoriteBorder,
+  ChatBubbleTwoTone,
   Send,
 } from '@mui/icons-material'
 import {
@@ -16,33 +15,26 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
-import { getPublicPostCommentsCount } from '../../../functions/comment'
 import { PostWithUser } from '../../../models/Post'
-import { commentsPostCountQueryKey } from '../../../queryKeyStore'
-import { abbreviateNumber, convertTime } from '../../../utils/functions'
+import { abbreviateNumber } from '../../../utils/functions'
 import CommentsDialog from './CommentsDialog'
+import PostReaction from './PostReaction'
 
 export default function UserPost({ post }: { post: PostWithUser }) {
   const {
     postId,
     caption,
     likes,
+    commentsCount,
     picture: postImage,
     user: author,
     createdAt: timestamp,
   } = post
-  const [liked, setLiked] = useState<boolean>(false)
+
   const [imageLoaded, setImageLoaded] = useState<boolean>(false)
   const [commentDialogOpen, setCommentDialogOpen] = useState<boolean>(false)
 
-  const commentsCountQuery = useQuery(commentsPostCountQueryKey(postId), {
-    queryFn: () => getPublicPostCommentsCount(postId),
-    staleTime: convertTime(5, 'min', 'ms'),
-  })
-
-  console.log(commentsCountQuery.data)
   return (
     <Card sx={styles.userPostWrapper}>
       <CardHeader
@@ -83,23 +75,20 @@ export default function UserPost({ post }: { post: PostWithUser }) {
       <CardActions disableSpacing>
         <Stack direction="row" alignItems={'center'} sx={{ ml: 0.5 }}>
           <Stack direction="row" alignItems={'center'} sx={{ mb: 0.5 }}>
-            <IconButton
-              onClick={() => setLiked(!liked)}
-              color={liked ? 'error' : 'default'}
-            >
-              {liked ? <Favorite /> : <FavoriteBorder />}
-            </IconButton>
+            <PostReaction postId={post.postId} />
             <Typography variant="button">{abbreviateNumber(likes)}</Typography>
           </Stack>
           <Stack direction="row" alignItems={'center'}>
             <IconButton onClick={() => setCommentDialogOpen(true)}>
-              <ChatBubbleOutlineRounded
-                color={commentDialogOpen ? 'success' : 'inherit'}
-              />
+              {commentDialogOpen ? (
+                <ChatBubbleTwoTone color="success" />
+              ) : (
+                <ChatBubbleOutlineRounded />
+              )}
             </IconButton>
 
             <Typography variant="button">
-              {abbreviateNumber(commentsCountQuery.data?.count || 0)}
+              {abbreviateNumber(commentsCount)}
             </Typography>
           </Stack>
           <IconButton>

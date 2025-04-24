@@ -10,7 +10,6 @@ export default function RootErrorFallback({
   error: ErrorDetails
   resetErrorBoundary: () => void
 }) {
-  console.log(error.message)
   if (!error || !error.message) {
     error = new ErrorDetails(
       'Unexpected Error',

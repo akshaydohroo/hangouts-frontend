@@ -1,5 +1,5 @@
 import { Send } from '@mui/icons-material'
-import { Box, Fab, Stack, Theme, useMediaQuery } from '@mui/material'
+import { Box, Fab, Skeleton, Stack, Theme, useMediaQuery } from '@mui/material'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import Draggable from 'react-draggable'
@@ -23,6 +23,7 @@ import { ErrorDetails } from '../utils/types'
 
 export default function Dashboard() {
   const isAuthenticated = useAppSelector(state => state.authenticated.value)
+
   const queryClient = useQueryClient()
   const dispatch = useAppDispatch()
   const userQuery = useQuery(userDataQueryKey, {
@@ -65,9 +66,9 @@ export default function Dashboard() {
           path="*"
           element={
             <Stack direction="row">
-              <Stack width="70%" flexGrow={1}>
+              <Stack minWidth={isMobileScreen ? '100%' : '70%'}>
                 <UserStories />
-                <Stack flexGrow={1}>
+                <Stack>
                   <UserPosts />
                 </Stack>
               </Stack>
@@ -82,12 +83,16 @@ export default function Dashboard() {
                       <Send />
                     </Fab>
                   </Draggable>
-                  <AuthBanner />
+                  {!isAuthenticated && <AuthBanner />}
                 </>
               ) : isAuthenticated ? (
-                <Box width="30%">Chats</Box>
+                <Box minWidth="30%">Chats</Box>
+              ) : userQuery.isLoading ? (
+                <Skeleton height={300} width="30%"></Skeleton>
               ) : (
-                <AuthBanner />
+                <Box minWidth="30%" maxWidth="30%" m={0} p={0}>
+                  <AuthBanner />
+                </Box>
               )}
             </Stack>
           }

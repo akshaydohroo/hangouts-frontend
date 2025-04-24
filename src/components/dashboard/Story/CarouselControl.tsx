@@ -15,7 +15,6 @@ function disableButtons(
 ) {
   const leftDisabled = Math.floor(scrollLeft) === 0
   const rightDisabled = Math.ceil(scrollLeft + offsetWidth) >= scrollWidth
-  console.log([scrollLeft + offsetWidth, scrollWidth])
   if (leftDisabled && rightDisabled) {
     setDisabledButton('both')
   } else if (leftDisabled) {
@@ -61,7 +60,6 @@ export default function CarouselControl({
   const [disabled, setDisabledButton] = useState<direction | null | 'both'>(
     null
   )
-  console.log(hasNextPage + ' ' + disabled)
 
   useEffect(() => {
     if (!carouselRef.current) return

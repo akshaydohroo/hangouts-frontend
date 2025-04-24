@@ -18,19 +18,14 @@ export const invalidateUserFollowOptions = (
   }
   return false
 }
-export const invalidateNotificationsUserQuery = (
-  queryKey: QueryKey,
-  page: number
-) => {
+export const invalidateNotificationsUserQuery = (queryKey: QueryKey) => {
   if (queryKey.length < 3) return false
   if (
     JSON.stringify(queryKey.slice(0, 2)) !==
     JSON.stringify(['notifications', 'user'])
   )
     return false
-  if ((queryKey[2] as { page: number }).page >= page) {
-    return true
-  }
+
   return false
 }
 

@@ -1,5 +1,7 @@
+import { InfiniteData, QueryClient } from '@tanstack/react-query'
 import { backend } from '../api'
-import { CountPostsWithUser } from '../models/Post'
+import { CountPostsWithUser, PostWithUser } from '../models/Post'
+import { postsWithUserQueryKey } from '../queryKeyStore'
 import { uploadFileInChunks } from '../utils/functions'
 
 export async function getPublicPosts(
@@ -45,4 +47,104 @@ export async function createPost(picture: File, caption: string) {
   } catch (error) {
     throw error
   }
+}
+
+export async function getIsLikedPost(postId: string) {
+  try {
+    const res = await backend.get('/post/like/user', {
+      params: {
+        postId,
+      },
+      withCredentials: true,
+    })
+    return res.data.isLiked as boolean
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function postToggleLikePost(postId: string, like: boolean) {
+  try {
+    const res = await backend.post(
+      '/post/like/user',
+      {
+        like: like,
+      },
+      {
+        params: {
+          postId: postId,
+        },
+        withCredentials: true,
+      }
+    )
+    return res.data as {}
+  } catch (error) {
+    throw error
+  }
+}
+
+export function changeLikesInCache(
+  queryClient: QueryClient,
+  postId: string,
+  amount: number
+) {
+  queryClient.setQueryData(
+    postsWithUserQueryKey(true),
+    (oldData?: InfiniteData<CountPostsWithUser>) => {
+      console.log(oldData?.pages.length + ' old data')
+
+      if (oldData) {
+        const newData = {
+          ...oldData,
+          pages: oldData.pages.map((page: CountPostsWithUser) => {
+            const updatedPosts = page.posts.map((post: PostWithUser) => {
+              if (post.postId === postId) {
+                return { ...post, likes: post.likes + amount }
+              }
+              return post
+            })
+            return {
+              ...page,
+              posts: updatedPosts,
+            }
+          }),
+        }
+        return newData
+      }
+      return oldData
+    }
+  )
+}
+
+export function changeCommentInCache(
+  queryClient: QueryClient,
+  postId: string,
+  amount: number
+) {
+  queryClient.setQueryData(
+    postsWithUserQueryKey(true),
+    (oldData?: InfiniteData<CountPostsWithUser>) => {
+      console.log(oldData?.pages.length + ' old data')
+
+      if (oldData) {
+        const newData = {
+          ...oldData,
+          pages: oldData.pages.map((page: CountPostsWithUser) => {
+            const updatedPosts = page.posts.map((post: PostWithUser) => {
+              if (post.postId === postId) {
+                return { ...post, likes: post.commentsCount + amount }
+              }
+              return post
+            })
+            return {
+              ...page,
+              posts: updatedPosts,
+            }
+          }),
+        }
+        return newData
+      }
+      return oldData
+    }
+  )
 }

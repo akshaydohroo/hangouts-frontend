@@ -1,4 +1,8 @@
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
+import {
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+  ReplySharp,
+} from '@mui/icons-material'
 import {
   Avatar,
   List,
@@ -8,25 +12,39 @@ import {
   Typography,
 } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
-import React, { useState } from 'react'
-import { getPublicPostComments } from '../../functions/comment'
+import React, { useContext, useState } from 'react'
+import { getPostComments, getPublicPostComments } from '../../functions/comment'
+import useAppSelector from '../../hooks/useAppSelector'
 import { CommentWithAuthor } from '../../models/Comment'
 import { commentPostQueryKey } from '../../queryKeyStore'
 import { abbreviateNumber, convertTime } from '../../utils/functions'
+import { UserCommentContext } from '../dashboard/Post/CommentsDialog'
+import CreateComment from './CreateComment'
 
 const Comment: React.FC<CommentWithAuthor> = comment => {
-  const [open, setOpen] = useState(false)
+  const userCommentContext = useContext(UserCommentContext)
 
+  if (!userCommentContext) {
+    throw new Error('UserCommentContext is not available')
+  }
+  const { parentReplyCommentId, setParentReplyCommentId } = userCommentContext
+
+  const [repliesOpen, setRepliesOpen] = useState(false)
+
+  const isAuthenticated = useAppSelector(state => state.authenticated.value)
   const childCommentsQuery = useQuery(
-    commentPostQueryKey(comment.postId, comment.commentId),
+    commentPostQueryKey(comment.postId, comment.commentId, isAuthenticated),
     {
-      queryFn: () => getPublicPostComments(comment.postId, comment.commentId),
+      queryFn: () =>
+        isAuthenticated
+          ? getPostComments(comment.postId, comment.commentId)
+          : getPublicPostComments(comment.postId, comment.commentId),
       staleTime: convertTime(5, 'min', 'ms'),
     }
   )
 
   const handleToggle = () => {
-    setOpen(!open)
+    setRepliesOpen(!repliesOpen)
   }
 
   const childCommentsWithAuthor = childCommentsQuery.data
@@ -58,29 +76,52 @@ const Comment: React.FC<CommentWithAuthor> = comment => {
           </Typography>
 
           {/* Reply Button */}
-          {childCommentsWithAuthor && childCommentsWithAuthor.length > 0 && (
-            <ListItemButton onClick={handleToggle} sx={styles.replyButton}>
-              {abbreviateNumber(childCommentsWithAuthor.length)}
-              {open ? (
-                <KeyboardArrowUp sx={styles.icon} />
-              ) : (
-                <KeyboardArrowDown sx={styles.icon} />
-              )}
+          <List sx={{ display: 'flex', gap: 1, flexDirection: 'row' }}>
+            {childCommentsWithAuthor && childCommentsWithAuthor.length > 0 && (
+              <ListItemButton onClick={handleToggle} sx={styles.repliesButton}>
+                {abbreviateNumber(childCommentsWithAuthor.length)}
+                {repliesOpen ? (
+                  <KeyboardArrowUp sx={styles.icon} />
+                ) : (
+                  <KeyboardArrowDown sx={styles.icon} />
+                )}
+                <Typography variant="body2">
+                  {repliesOpen ? 'Hide Replies' : 'View Replies'}
+                </Typography>
+              </ListItemButton>
+            )}
+            <ListItemButton
+              sx={styles.replyButton}
+              onClick={() => {
+                if (parentReplyCommentId === comment.commentId) {
+                  setParentReplyCommentId(undefined)
+                } else {
+                  setParentReplyCommentId(comment.commentId)
+                }
+              }}
+              disabled={!isAuthenticated}
+            >
+              <ReplySharp sx={styles.icon} />
+              <Typography variant="body2">Reply</Typography>
             </ListItemButton>
-          )}
+          </List>
         </Stack>
       </ListItem>
 
-      {/* Nested Comments */}
-      {open &&
-        childCommentsWithAuthor &&
-        childCommentsWithAuthor.length > 0 && (
-          <List component="div" disablePadding sx={styles.replyContainer}>
-            {childCommentsWithAuthor.map((child, index) => (
-              <Comment key={index} {...child} />
-            ))}
-          </List>
+      <List component="div" disablePadding sx={styles.replyContainer}>
+        {/* Nested Comments */}
+        {parentReplyCommentId === comment.commentId && (
+          <CreateComment parentCommentId={comment.commentId} />
         )}
+        {repliesOpen &&
+          childCommentsWithAuthor &&
+          childCommentsWithAuthor.length > 0 &&
+          childCommentsWithAuthor.map(
+            (child: CommentWithAuthor, index: number) => (
+              <Comment key={index} {...child} />
+            )
+          )}
+      </List>
     </List>
   )
 }
@@ -119,11 +160,24 @@ const styles = {
   replyButton: {
     fontSize: '0.85rem',
     textTransform: 'none',
-    color: 'secondary.main',
+    color: 'primary.main',
     display: 'flex',
     alignItems: 'center',
     gap: 0.5,
     mt: 0.5,
+    maxWidth: '150px',
+    width: '20%',
+  },
+  repliesButton: {
+    fontSize: '0.85rem',
+    textTransform: 'none',
+    color: 'primary.main',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 0.5,
+    mt: 0.5,
+    maxWidth: '150px',
+    width: '20%',
   },
   icon: {
     fontSize: 18,

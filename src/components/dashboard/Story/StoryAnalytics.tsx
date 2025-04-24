@@ -105,7 +105,6 @@ export default function StoryAnalytics({
 
 const findLikedByViewers = (viewers: UserWithStoryInteraction[]) => {
   const likedByViewers = viewers.filter(viewer => {
-    console.log(viewer)
     return viewer.storyInteraction.isLike
   })
   return likedByViewers
