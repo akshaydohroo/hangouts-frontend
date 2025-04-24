@@ -35,9 +35,7 @@ function App() {
   const error = useAppSelector(state => state.error.value)
 
   useEffect(() => {
-    backend.get('/health').then(res => {
-      console.log(res.data)
-    })
+    backend.get('/health').then(res => {})
   }, [])
 
   useEffect(() => {

@@ -13,8 +13,8 @@ import { UUID } from 'crypto'
 import { deleteNotification } from '../../functions/notification'
 import { acceptUserFollowRequest } from '../../functions/userFollower'
 import useAppDispatch from '../../hooks/useAppDispatch'
-import { invalidateNotificationsUserQuery } from '../../invalidateQueries'
 import { NotificationBackendWithSender } from '../../models/Notification'
+import { userTypeDataQueryKey } from '../../queryKeyStore'
 import { setSnackbar } from '../../redux/snackbar'
 import { timeSince } from '../../utils/functions'
 export default function NotificationOption({
@@ -36,10 +36,7 @@ export default function NotificationOption({
         notificationStatus = 'Notification cleared'
       }
       await deleteNotification(notificationWithSender.notificationId as UUID)
-      queryClient.invalidateQueries({
-        predicate: ({ queryKey }) =>
-          invalidateNotificationsUserQuery(queryKey, page),
-      })
+      queryClient.invalidateQueries(userTypeDataQueryKey('notifications', page))
       dispatch(
         setSnackbar({
           message: `${notificationStatus}`,
@@ -90,16 +87,18 @@ export default function NotificationOption({
             </IconButton>
           </Tooltip>
         </Box>
-        <Box>
-          <Tooltip title="Accept Request" arrow placement="right">
-            <IconButton
-              sx={styles.acceptButton}
-              onClick={() => onClickNotificationHandler('accept')}
-            >
-              <CheckCircleIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+        {notificationWithSender.notificationType === 'follow' && (
+          <Box>
+            <Tooltip title="Accept Request" arrow placement="right">
+              <IconButton
+                sx={styles.acceptButton}
+                onClick={() => onClickNotificationHandler('accept')}
+              >
+                <CheckCircleIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
       </Stack>
     </Stack>
   )

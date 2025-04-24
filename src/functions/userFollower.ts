@@ -54,7 +54,6 @@ export async function acceptUserFollowRequest(senderId: string): Promise<void> {
     if (!senderId) {
       throw Error('senderId to cannot be empty')
     }
-    console.log(senderId)
     await backend.get(`/follow/accept/${senderId}`, {
       withCredentials: true,
     })

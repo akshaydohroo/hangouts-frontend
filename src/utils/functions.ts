@@ -202,10 +202,6 @@ export function uploadFileInChunks(
           if (currentChunk < totalChunks) {
             uploadNextChunk()
           }
-          console.log(res)
-          console.log(
-            'Chunk at index ' + (currentChunk - 1) + ' uploaded successfully'
-          )
           resolve()
         })
         .catch(error => {

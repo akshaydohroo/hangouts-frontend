@@ -20,7 +20,7 @@ const iconTypeMap = {
   notifications: <NotificationsIcon />,
   chats: <ChatIcon />,
 }
-type NavbarButtonProps = {
+export type NavbarButtonProps = {
   type: 'chats' | 'notifications'
 }
 

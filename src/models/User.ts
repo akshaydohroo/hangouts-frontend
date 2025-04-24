@@ -35,7 +35,6 @@ export class User {
     const fieldsToIgnore = ['id', 'createdAt']
     try {
       for (let key in this) {
-        console.log(key + ' ' + !fieldsToIgnore.includes(key))
         if (!fieldsToIgnore.includes(key) && !this[key])
           throw Error(`${key} is empty, ${key} should have a valid value`)
       }

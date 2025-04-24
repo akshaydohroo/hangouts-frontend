@@ -16,7 +16,6 @@ export default function LogoutMenuItem({
   async function onClickLogout() {
     try {
       await User.logout()
-      console.log('logout')
       await queryClient.cancelQueries()
       dispatch(
         setSnackbar({

@@ -84,7 +84,6 @@ const styles = {
     border: `1px solid divider`,
     borderRadius: 4, // Directly using a value for border radius
     boxShadow: 1, // Assuming a shadow value
-    height: '20%',
   },
   bannerWrapper: {
     position: 'relative',

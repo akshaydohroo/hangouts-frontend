@@ -63,11 +63,19 @@ export const postsWithUserQueryKey = (isAuthenticated: boolean) => [
 
 export const commentPostQueryKey = (
   postId: string,
-  parentCommentId: string | null
-) => ['comment', 'post', { postId, parentCommentId }]
+  parentCommentId: string | null,
+  isAuthenticated: boolean
+) => ['comment', 'post', { postId, parentCommentId, isAuthenticated }]
 
 export const commentsPostCountQueryKey = (postId: string) => [
   'comment',
   'post',
+  { postId },
+]
+
+export const postLikeQueryKey = (postId: string) => [
+  'post',
+  'user',
+  'like',
   { postId },
 ]
