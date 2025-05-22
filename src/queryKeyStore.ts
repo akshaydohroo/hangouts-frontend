@@ -79,3 +79,19 @@ export const postLikeQueryKey = (postId: string) => [
   'like',
   { postId },
 ]
+
+export const chatOptionQueryKey = (searchString: string) => [
+  'chat',
+  'options',
+  {
+    searchString,
+  },
+]
+
+export const chatMessagesQueryKey = (chatId: string) => [
+  'chat',
+  'messages',
+  {
+    chatId,
+  },
+]

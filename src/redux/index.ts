@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authenticated from './authenticated'
+import chatDialogOpen from './chatDialogOpen'
+import chatOpen from './chatOpen'
 import error from './error'
 import snackbar from './snackbar'
 import themeMode from './themeMode'
@@ -9,6 +11,8 @@ const store = configureStore({
     snackbar,
     authenticated,
     error,
+    chatOpen,
+    chatDialogOpen,
   },
 })
 
