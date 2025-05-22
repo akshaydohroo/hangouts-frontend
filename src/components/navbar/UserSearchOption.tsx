@@ -1,12 +1,15 @@
+import { ChatBubble } from '@mui/icons-material'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
+import { getOrCreateUserChat } from '../../functions/chat'
 import { followUser } from '../../functions/userFollower'
 import useAppDispatch from '../../hooks/useAppDispatch'
 import useAppSelector from '../../hooks/useAppSelector'
 import { invalidateUserFollowOptions } from '../../invalidateQueries'
 import { UserWithFollower } from '../../models/UserFollower'
+import { setChatOpen } from '../../redux/chatOpen'
 import { setSnackbar } from '../../redux/snackbar'
 
 export default function UserSearchOption({
@@ -53,6 +56,28 @@ export default function UserSearchOption({
       )
     }
   }
+
+  async function onChatClickHandler(user: UserWithFollower) {
+    try {
+      const chatId = await getOrCreateUserChat(user.id as string)
+      dispatch(setChatOpen({ value: chatId }))
+      
+      dispatch(
+        setSnackbar({
+          severity: 'success',
+          message: `Chat connection established with user ${user.name}`,
+        })
+      )
+    } catch (error) {
+      console.error(error)
+      dispatch(
+        setSnackbar({
+          severity: 'error',
+          message: `Couldnt create chat with user ${user.name}`,
+        })
+      )
+    }
+  }
   return (
     <ListItem sx={{ width: 300 }} divider>
       <Stack direction="row" sx={styles.wrapper}>
@@ -78,6 +103,18 @@ export default function UserSearchOption({
         >
           <PersonAddIcon />
         </IconButton>
+        <IconButton
+          sx={styles.chatButton()}
+          onClick={() => onChatClickHandler(option)}
+          disabled={
+            !isAuthenticated ||
+            (option.visibility === 'private' &&
+              (preRequestIfAnyStatus === null ||
+                preRequestIfAnyStatus === 'pending'))
+          }
+        >
+          <ChatBubble />
+        </IconButton>
       </Stack>
     </ListItem>
   )
@@ -92,7 +129,7 @@ const styles = {
     mr: 3,
   },
   user: {
-    minWidth: '55%',
+    minWidth: '40%',
   },
   name: {
     overflow: 'hidden',
@@ -115,5 +152,12 @@ const styles = {
     '&:hover, &:focus': {
       color: 'info.main',
     },
+  }),
+  chatButton: () => ({
+    ml: 'auto',
+    '&:disabled': {
+      color: 'disabled',
+    },
+    color: 'success.main',
   }),
 }

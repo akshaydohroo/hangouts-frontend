@@ -2,9 +2,10 @@ import { Send } from '@mui/icons-material'
 import { Box, Fab, Skeleton, Stack, Theme, useMediaQuery } from '@mui/material'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import Draggable from 'react-draggable'
 import { Route, Routes } from 'react-router-dom'
 import AuthBanner from '../components/common/AuthBanner'
+import ChatDialog from '../components/dashboard/chat/ChatDialog'
+import Chats from '../components/dashboard/chat/Chats'
 import UserPosts from '../components/dashboard/Post/UserPosts'
 import UserStories from '../components/dashboard/Story/UserStories'
 import Navbar from '../components/navbar/Navbar'
@@ -14,6 +15,7 @@ import useAppSelector from '../hooks/useAppSelector'
 import Account from '../modules/Account' // Import the Account component
 import { userDataQueryKey } from '../queryKeyStore'
 import { removeAuthenticated, setAuthenticated } from '../redux/authenticated'
+import { openChatDialog } from '../redux/chatDialogOpen'
 import { setError } from '../redux/error'
 import {
   convertTime,
@@ -74,19 +76,26 @@ export default function Dashboard() {
               </Stack>
               {isMobileScreen ? (
                 <>
-                  <Draggable defaultPosition={{ x: 0, y: 0 }} bounds="parent">
-                    <Fab
-                      color="success"
-                      aria-label="chat"
-                      sx={styles.chatButton}
-                    >
-                      <Send />
-                    </Fab>
-                  </Draggable>
-                  {!isAuthenticated && <AuthBanner />}
+                  {isAuthenticated ? (
+                    <>
+                      <Fab
+                        color="success"
+                        aria-label="chat"
+                        sx={styles.chatButton}
+                        onClick={() => dispatch(openChatDialog())}
+                      >
+                        <Send />
+                      </Fab>
+                      <ChatDialog />
+                    </>
+                  ) : (
+                    <AuthBanner />
+                  )}
                 </>
               ) : isAuthenticated ? (
-                <Box minWidth="30%">Chats</Box>
+                <Box minWidth="30%">
+                  <Chats />
+                </Box>
               ) : userQuery.isLoading ? (
                 <Skeleton height={300} width="30%"></Skeleton>
               ) : (
